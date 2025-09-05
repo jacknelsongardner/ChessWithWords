@@ -1,17 +1,17 @@
 import { navigateTo } from '@devvit/web/client';
-import { useCounter } from './hooks/useCounter';
+//import { useCounter } from './hooks/useCounter';
 import GameView from './pieces/tileMap.tsx';
 import {Game} from './pieces/chessPiece.tsx';
 
 
-const game: Game = new Game(6, 6, ["at", "be","good", "dog", "happy", "cat", "bat", "ball", "call", "doll", "crab", "god"]);
+const game: Game = new Game(6, 6, ["at", "be", "to", "tea", "bat", "tab", "abet", "beta", "beat", "bead", "bad", "cab", "cat", "act", "ace"]);
 
 export const App = () => {
-  const { count, username, loading, increment, decrement } = useCounter();
+  //const { count, username, loading, increment, decrement } = useCounter();
   
 
   const backgroundStyle = {
-    backgroundImage: 'url("/background2.gif")',
+    backgroundImage: 'url("/background3.gif")',
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };

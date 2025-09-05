@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import {Game} from "./chessPiece.tsx";
+import "./Cursor.css";
+
 
 interface TileProps {
   x: number;
@@ -75,60 +77,6 @@ function Peice () {
 }
 
 
-  const currentThemeStyle: React.CSSProperties = {
-    fontSize: '1.2em',
-    fontWeight: 'bold',
-    margin: '10px 0',
-    color: 'white',
-    textShadow: '2px 2px 4px #000000',
-    textAlign: 'center' as const
-  }
-
-  const currentWordStyle: React.CSSProperties = {
-    fontSize: '1.5em',
-    fontWeight: 'bold',
-    margin: '10px 0',
-    color: 'black',
-    backgroundColor: 'white',
-    padding: '10px',
-    borderRadius: '8px',
-    textAlign: 'center' as const,
-    minWidth: '200px',
-    minHeight: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    whiteSpace: 'pre-wrap' as const, // allows for multiline text
-  }
-
-  const wordsToGoStyle: React.CSSProperties = {
-    columnWidth: "60px",     // target width of each column
-    columnGap: "1rem",        // space between columns
-    maxHeight: "100px",       // enforce a minimum height before wrapping
-    whiteSpace: "pre-line",
-    color: "white",
-    textShadow: "2px 2px 4px #000000",
-    textAlign: "center" as const
-  }
-
-
-  const resetButtonStyle: React.CSSProperties = {
-    width: "50px",          // same width & height
-    height: "50px",
-    fontSize: "1.2em",
-    fontWeight: "bold",
-    color: "black",
-    backgroundColor: "#ffffffff", // picked a blue (since #ffffffff was invalid)
-    border: "none",
-    borderRadius: "50%",    // makes it a circle
-    cursor: "pointer",
-    display: "flex",        // center content
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-    transition: "background-color 0.3s, box-shadow 0.3s",
-  };
-
 function GameView() {
   const [timeLeft, setTime] = useState(60); // 60 seconds
 
@@ -155,6 +103,72 @@ function GameView() {
   }
 
 
+
+  const currentThemeStyle: React.CSSProperties = {
+    fontSize: '1.2em',
+    fontWeight: 'bold',
+    margin: '10px 0',
+    color: 'white',
+    textShadow: '2px 2px 4px #000000',
+    textAlign: 'center' as const
+  }
+
+  const currentWordStyle: React.CSSProperties = {
+    fontSize: '1.5em',
+    fontWeight: 'bold',
+    margin: '10px 0',
+    color: 'black',
+    backgroundColor: 'white',
+    padding: '10px',
+    borderRadius: '8px',
+    textAlign: 'center' as const,
+    minWidth: '150px',
+    minHeight: '40px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    whiteSpace: 'pre-wrap' as const,
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
+    userSelect: "none", // prevent text selection
+
+
+  }
+
+  const wordsToGoStyle: React.CSSProperties = {
+    columnWidth: "60px",     // target width of each column
+    columnGap: "1rem",        // space between columns
+    maxHeight: "100px",       // enforce a minimum height before wrapping
+    whiteSpace: "pre-line",
+    color: "white",
+    textShadow: "2px 2px 4px #000000",
+    textAlign: "center" as const,
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
+    backgroundColor: "rgba(0, 0, 0, 0.23)",
+    padding: "1px",
+    borderRadius: "8px",
+    marginTop: "5px",
+    marginBottom: "5px",
+    userSelect: "none", // prevent text selection
+  }
+
+
+  const resetButtonStyle: React.CSSProperties = {
+    width: "50px",          // same width & height
+    height: "50px",
+    fontSize: "1.2em",
+    fontWeight: "bold",
+    color: "black",
+    backgroundColor: "#ffffffff", // picked a blue (since #ffffffff was invalid)
+    border: "none",
+    borderRadius: "50%",    // makes it a circle
+    cursor: "pointer",
+    display: "flex",        // center content
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
+    transition: "background-color 0.3s, box-shadow 0.3s",
+  };
+
   const timeStyle: React.CSSProperties = {
     fontSize: '1.2em',
     fontWeight: 'bold',
@@ -163,20 +177,22 @@ function GameView() {
     textAlign: 'center' as const,
     backgroundColor: "white",
     padding: '2px',
-    borderRadius: '50%',
-    maxWidth: '100px',
+    borderRadius: '10px',
+    minWidth: '80px',
     minHeight: '40px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 0 10px black' // glow effect if 10 seconds or less
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)", // glow effect if 10 seconds or less
   }
 
   return (
     <div style={style}>
 
-      <p style={currentThemeStyle}>
-        {Game.game.theme}
+
+      <p style={currentWordStyle}>
+        {Game.game.currentWord || ""}
+        <span className="cursor">|</span>
       </p>
 
       <p className="text-base text-center text-gray-600 " style={wordsToGoStyle}>
@@ -191,36 +207,21 @@ function GameView() {
         
       </p>
 
-      
-      <p style={currentWordStyle}>
-        {Game.game.currentWord || "Start forming a word!"}
-      </p>
-
       <Grid onClick={handleTileClick}/>
 
-      <div style={{ display: "flex", flexDirection: "row", gap: "50px", marginTop: "20px", alignItems: "center", justifyContent: "center" }}>
-        
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", marginTop: "20px", width: "100%" }}>
+        {/* Reset button - left */}
+        <button style={resetButtonStyle} onClick={() => window.location.reload()}>
+          🔄
+        </button>
 
-        
-        <col>
-          <button style={resetButtonStyle} onClick={() => window.location.reload()}>
-            🔄
-          </button>
-        </col>
-    
-        <col> 
-          <p style={timeStyle}>
-            🕚 {timeLeft}s
-          </p>
-        
-        </col>
-        
+        {/* Timer - absolutely centered */}
+        <p style={timeStyle}>
+          🕚 {timeLeft}s
+        </p>
 
-        <col style={{ display: "flex", alignItems: "right", justifyContent: "right" }}>
-          <img src="/logo.png" alt=":D" style={{ width: "50px", height: "50px" }} />
-        </col>
-       
-
+        {/* Logo - right */}
+        <img src="/logo.png" alt=":D" style={{ width: "50px", height: "50px" }} />
       </div>
 
     </div>
@@ -240,7 +241,8 @@ function Grid({onClick}: {onClick: ((x: number, y: number) => void)}) {
     border: "20px solid rgba(255, 255, 255, 1)",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
     backgroundColor: "rgba(255, 255, 112, 1)",
-    borderRadius: "16px"
+    borderRadius: "16px",
+    marginTop: "10px"
   };
 
 
