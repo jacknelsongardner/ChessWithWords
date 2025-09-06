@@ -35,6 +35,8 @@ class Game {
 
         this.board.shuffleBoard();
         
+        this.board.letters.map(row => row.map(letter => letter.toLowerCase()));
+
         console.log(this.wordsToGet.slice(0, 20));
         
         return this;

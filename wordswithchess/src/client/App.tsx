@@ -11,7 +11,7 @@ export const App = () => {
   
 
   const backgroundStyle = {
-    backgroundImage: 'url("/background3.gif")',
+    backgroundImage: 'url("/scrabble.png")',
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };
