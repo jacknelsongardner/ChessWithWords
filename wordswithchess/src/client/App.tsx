@@ -2,22 +2,23 @@ import { navigateTo } from '@devvit/web/client';
 //import { useCounter } from './hooks/useCounter';
 import GameView from './pieces/tileMap.tsx';
 import {Game} from './pieces/chessPiece.tsx';
+import "./background.css";
 
 
-const game: Game = new Game(6, 6, ["at", "be", "to", "tea", "bat", "tab", "abet", "beta", "beat", "bead", "bad", "cab", "cat", "act", "ace"]);
+const game: Game = new Game(6, 6, ["at", "be", "to", "tea", "bat", "tab", "abet", "beta", "beat", "bead", "bad", "cab", "cat", "act", "ace", "face", "fade", "decaf", "cafe", "fade", "deaf", "beef", "feed", "faced", "bade", "bead", "beefed"]);
 
 export const App = () => {
   //const { count, username, loading, increment, decrement } = useCounter();
   
 
   const backgroundStyle = {
-    backgroundImage: 'url("/scrabble.png")',
+    backgroundImage: 'url("/background5.jpg")',
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };
   
   return (
-    <div className="flex relative flex-col justify-center items-center min-h-screen w-screen gap-4" style={backgroundStyle}>
+    <div className="blur-bg flex relative flex-col justify-center items-center min-h-screen w-screen gap-4" style={backgroundStyle}>
       {/*}
       <div className="flex flex-col items-center gap-2">
         <p className="text-2xl font-bold text-center text-gray-900 ">

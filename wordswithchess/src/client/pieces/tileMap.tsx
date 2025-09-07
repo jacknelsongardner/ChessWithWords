@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {Game} from "./chessPiece.tsx";
 import "./Cursor.css";
 
-
 interface TileProps {
   x: number;
   y: number;
@@ -14,20 +13,21 @@ function Tile({ x, y, size, onClick }: TileProps) {
   
   let color: string = "brown"; // default color, if something fails
 
-  if (Game.game.board.lettersRight[x]?.[y]) {
+  /* if (Game.game.board.lettersRight[x]?.[y]) {
     color = "lightgreen"; // found letter
-  } else {
+  } else {*/ 
+
       if (x % 2 === 0 && y % 2 === 0) {
-        color = "rgba(255, 209, 101, 0.8)"; // light tile
+        color = "rgba(104, 167, 209, 1)"; // light tile
       } else if (x % 2 === 1 && y % 2 === 1) {
         // odd row, odd col
         // white tile
-        color = "rgba(255, 209, 101, 0.8)";
+        color = "rgba(104, 167, 209, 1)";
       }
       else {
-        color = "rgba(239, 153, 92, 0.8)";
+        color = "rgba(31, 67, 129, 1)";
       }
-  }
+  //}
 
   
   
@@ -41,7 +41,8 @@ function Tile({ x, y, size, onClick }: TileProps) {
     position: "relative",
     backgroundColor: color,
     border: `0px`,
-    borderRadius: "8px"
+    borderRadius: "8px",
+    color: "white",
   };
 
   return  <div style={style} onClick={() => onClick(x, y)}> 
@@ -137,7 +138,6 @@ function GameView() {
   const wordsToGoStyle: React.CSSProperties = {
     columnWidth: "60px",     // target width of each column
     columnGap: "1rem",        // space between columns
-    maxHeight: "100px",       // enforce a minimum height before wrapping
     whiteSpace: "pre-line",
     color: "white",
     textShadow: "2px 2px 4px #000000",
@@ -149,6 +149,9 @@ function GameView() {
     marginTop: "5px",
     marginBottom: "5px",
     userSelect: "none", // prevent text selection
+    minHeight: "50px",
+    maxHeight: "50px",       // enforce a minimum height before wrapping
+
   }
 
 
@@ -210,7 +213,7 @@ function GameView() {
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", marginTop: "20px", width: "100%" }}>
         {/* Reset button - left */}
-        <button style={resetButtonStyle} onClick={() => Game.game.resetBoard()}>
+        <button style={resetButtonStyle} onClick={() => {Game.game.resetBoard(); setRender(0); }}>
           🎲
         </button>
 
@@ -239,7 +242,7 @@ function Grid({onClick}: {onClick: ((x: number, y: number) => void)}) {
     position: "relative",
     border: "20px solid rgba(255, 255, 255, 1)",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
-    backgroundColor: "rgba(255, 255, 112, 1)",
+    backgroundColor: "rgba(104, 167, 209, 1)",
     borderRadius: "16px",
     marginTop: "10px"
   };

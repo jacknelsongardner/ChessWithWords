@@ -85,28 +85,45 @@ class Game {
         
         // if no possible words, reset current word
         if (this.possibleWords.length === 0 && !recursion) {
-            console.log("No possible words. Resetting current word to: " + Game.game.wordsGot)
-            this.currentWord = "";
-            this.board.resetRightArray();
 
-            this.filterPossibleWords(true); // avoid infinite recursion
+            if (this.currentWord.length > 1) {
+                console.log("Trying to minimize current word to see possible strings")
+                
+                const splitArr = this.currentWord.split("");
+                splitArr.shift()!;
+                this.currentWord = splitArr.join("")
 
-            this.currentWord = Game.game.board.letters[this.peice.x]?.[this.peice.y] ?? "";
-            
-        }
 
+                this.filterPossibleWords();
+            } 
+            else {
+
+                console.log("No possible words. Resetting current word to: " + Game.game.wordsGot)
+                this.currentWord = "";
+                this.board.resetRightArray();
+
+                this.filterPossibleWords(true); // avoid infinite recursion
+
+                this.currentWord = Game.game.board.letters[this.peice.x]?.[this.peice.y] ?? "";
+                
+            }
+
+        } 
         // 
-        if (this.possibleWords.includes(Game.game.currentWord)) {
+        else if (this.possibleWords.includes(Game.game.currentWord)) {
             console.log("found word: " + Game.game.currentWord)
             this.wordsGot.push(Game.game.currentWord);
             //this.wordsToGet = Game.game.wordsToGet.filter(word => word !== Game.game.currentWord);
-            this.currentWord = "";
-            this.board.resetRightArray();
+            //this.currentWord = "";
+            //this.board.resetRightArray();
 
-            this.currentWord = Game.game.board.letters[this.peice.x]?.[this.peice.y] ?? "";
+            //this.currentWord = Game.game.board.letters[this.peice.x]?.[this.peice.y] ?? "";
 
-            if (Game.game.wordsToGet.length === 0) {
+
+
+            if (Game.game.wordsOnBoard.length === 0) {
                 alert("You win!");
+                this.testNextBoard();
 
             } else {
                 alert("You found a word! Words left: " + Game.game.wordsToGet.join(", "));
