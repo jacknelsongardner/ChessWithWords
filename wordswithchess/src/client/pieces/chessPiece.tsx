@@ -21,6 +21,8 @@ class Game {
     public currentWord: string = "";
     public possibleWords: string[] = [];
 
+    public wordsOnBoard: string[] = [];
+
 
     constructor(sixeX: number, sizeY: number, words: string[]) {
         Game.game = this;
@@ -33,25 +35,57 @@ class Game {
         this.board = new Board(sixeX, sizeY, words.join(''));
         console.table(this.board.letters);
 
-        this.board.shuffleBoard();
-        
-        this.board.letters.map(row => row.map(letter => letter.toLowerCase()));
-
+        this.resetBoard();
         console.log(this.wordsToGet.slice(0, 20));
         
+
+
         return this;
         
     }
 
     resetBoard() {
+
+        
         this.board.shuffleBoard();
+        this.currentWord = "";
+
+        this.possibleWords = this.possibleWords.map(word => word.toLowerCase());
+        this.wordsOnBoard = this.wordsOnBoard.map(word => word.toLowerCase());
+        this.wordsToGet = this.wordsToGet.map(word => word.toLowerCase());
+        this.wordsGot = this.wordsGot.map(word => word.toLowerCase());
+        
+        this.board.letters = this.board.letters.map(row => row.map(letter => letter.toLowerCase()));
+
     }
+
+    testNextBoard() {
+
+        if (this.testWin()) {
+            alert("You win!");
+            return;
+        }
+
+        if (this.wordsOnBoard.length === 0) {
+            alert("You win!");
+            return;
+        }
+
+    
+    }
+
+    testWin(): boolean {
+        return this.wordsToGet.length === this.wordsGot.length;
+    }
+
 
     filterPossibleWords(recursion: boolean = false) {
         console.log(this.currentWord)
-        this.possibleWords = this.wordsToGet.filter(word => word.startsWith(this.currentWord));
+        this.possibleWords = this.wordsOnBoard.filter(word => word.startsWith(this.currentWord) && !this.wordsGot.includes(word));
+        
         // if no possible words, reset current word
         if (this.possibleWords.length === 0 && !recursion) {
+            console.log("No possible words. Resetting current word to: " + Game.game.wordsGot)
             this.currentWord = "";
             this.board.resetRightArray();
 
@@ -63,11 +97,13 @@ class Game {
 
         // 
         if (this.possibleWords.includes(Game.game.currentWord)) {
-
+            console.log("found word: " + Game.game.currentWord)
             this.wordsGot.push(Game.game.currentWord);
             //this.wordsToGet = Game.game.wordsToGet.filter(word => word !== Game.game.currentWord);
             this.currentWord = "";
             this.board.resetRightArray();
+
+            this.currentWord = Game.game.board.letters[this.peice.x]?.[this.peice.y] ?? "";
 
             if (Game.game.wordsToGet.length === 0) {
                 alert("You win!");
@@ -202,6 +238,8 @@ class Board {
         var wordsToShuffle = this.shuffleArray(Game.game.wordsToGet.map(word => !Game.game.wordsGot.includes(word) ? word : ""));
         console.log("Shuffle words: " + wordsToShuffle.join(", "));
 
+        Game.game.wordsOnBoard = [];
+
         for (var word of wordsToShuffle) {
             console.log(word);
 
@@ -225,11 +263,13 @@ class Board {
             for (var i = 0; i < word.length; i++) {
                 this.letters[path![i]![0]]![path![i]![1]] = word[i]!;
             }
+
+            Game.game.wordsOnBoard.push(word);
+
         }
 
         console.table(this.letters);
         this.resetRightArray();
-
     }
 
 
@@ -266,6 +306,7 @@ class ChessPeice {
             
             if (Game.game.possibleWords.length > 0) { 
                 console.log("Possible words: " + Game.game.possibleWords.join(", "));
+                console.log("Words on board: " + Game.game.wordsOnBoard.join(", "));
                 Game.game.board.lettersRight[x]![y] = true;
             }
 

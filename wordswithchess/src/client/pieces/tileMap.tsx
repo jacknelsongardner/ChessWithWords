@@ -169,6 +169,7 @@ function GameView() {
     transition: "background-color 0.3s, box-shadow 0.3s",
   };
 
+
   const timeStyle: React.CSSProperties = {
     fontSize: '1.2em',
     fontWeight: 'bold',
@@ -196,23 +197,21 @@ function GameView() {
       </p>
 
       <p className="text-base text-center text-gray-600 " style={wordsToGoStyle}>
-        {Game.game.wordsToGet.map((word) => {
-          if (Game.game.wordsGot.includes(word)) {
-            return word + "\n";
-          }
-          else {
-            return word.split("").map(() => "-").join("") + "\n";
-          }; 
+        {Game.game.wordsOnBoard.map((word) => {
+          if (!Game.game.wordsGot.includes(word)) {
+            return <span>{word.toLowerCase() + "\n"}</span>;
+          } else { return  <>{""}</>  }  //<span style={{ textDecoration: "line-through" }}>{word + "\n"}</span> }
         })}
         
       </p>
+
 
       <Grid onClick={handleTileClick}/>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", marginTop: "20px", width: "100%" }}>
         {/* Reset button - left */}
-        <button style={resetButtonStyle} onClick={() => window.location.reload()}>
-          🔄
+        <button style={resetButtonStyle} onClick={() => Game.game.resetBoard()}>
+          🎲
         </button>
 
         {/* Timer - absolutely centered */}
