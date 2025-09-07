@@ -1,152 +1,18 @@
-//const wordlist = require('wordlist-english');
-//const allWords: string[] = wordlist['english'];
+import { getUniqueLetters, shuffleArray, fillArray } from "./arrayHelper";
 
-
-
-
-
-class Game {
-
-    
-    static game: Game; // singleton instance 
-    public board: Board = new Board(0, 0, '');
-    public peice: ChessPeice = new ChessPeice(0, 0);
-    public width: number = 0;
-    public height: number = 0;
-
-    public theme: string = "🐶 Pets 🐈"; // future use
-
-    public wordsToGet: string[] = [];
-    public wordsGot: string[] = [];
-    public currentWord: string = "";
-    public possibleWords: string[] = [];
-
-    public wordsOnBoard: string[] = [];
-
-
-    constructor(sixeX: number, sizeY: number, words: string[]) {
-        Game.game = this;
-
-        this.peice = new Knight(0, 0);
-        this.width = sixeX;
-        this.height = sizeY;
-        console.log(`Game created with board size ${sixeX}x${sizeY}`);
-        this.wordsToGet = words;
-        this.board = new Board(sixeX, sizeY, words.join(''));
-        console.table(this.board.letters);
-
-        this.resetBoard();
-        console.log(this.wordsToGet.slice(0, 20));
-        
-
-
-        return this;
-        
-    }
-
-    resetBoard() {
-
-        
-        this.board.shuffleBoard();
-        this.currentWord = "";
-
-        this.possibleWords = this.possibleWords.map(word => word.toLowerCase());
-        this.wordsOnBoard = this.wordsOnBoard.map(word => word.toLowerCase());
-        this.wordsToGet = this.wordsToGet.map(word => word.toLowerCase());
-        this.wordsGot = this.wordsGot.map(word => word.toLowerCase());
-        
-        this.board.letters = this.board.letters.map(row => row.map(letter => letter.toLowerCase()));
-
-    }
-
-    testNextBoard() {
-
-        if (this.testWin()) {
-            alert("You win!");
-            return;
-        }
-
-        if (this.wordsOnBoard.length === 0) {
-            alert("You win!");
-            return;
-        }
-
-    
-    }
-
-    testWin(): boolean {
-        return this.wordsToGet.length === this.wordsGot.length;
-    }
-
-
-    filterPossibleWords(recursion: boolean = false) {
-        console.log(this.currentWord)
-        this.possibleWords = this.wordsOnBoard.filter(word => word.startsWith(this.currentWord) && !this.wordsGot.includes(word));
-        
-        // if no possible words, reset current word
-        if (this.possibleWords.length === 0 && !recursion) {
-
-            if (this.currentWord.length > 1) {
-                console.log("Trying to minimize current word to see possible strings")
-                
-                const splitArr = this.currentWord.split("");
-                splitArr.shift()!;
-                this.currentWord = splitArr.join("")
-
-
-                this.filterPossibleWords();
-            } 
-            else {
-
-                console.log("No possible words. Resetting current word to: " + Game.game.wordsGot)
-                this.currentWord = "";
-                this.board.resetRightArray();
-
-                this.filterPossibleWords(true); // avoid infinite recursion
-
-                this.currentWord = Game.game.board.letters[this.peice.x]?.[this.peice.y] ?? "";
-                
-            }
-
-        } 
-        // 
-        else if (this.possibleWords.includes(Game.game.currentWord)) {
-            console.log("found word: " + Game.game.currentWord)
-            this.wordsGot.push(Game.game.currentWord);
-            //this.wordsToGet = Game.game.wordsToGet.filter(word => word !== Game.game.currentWord);
-            //this.currentWord = "";
-            //this.board.resetRightArray();
-
-            //this.currentWord = Game.game.board.letters[this.peice.x]?.[this.peice.y] ?? "";
-
-
-
-            if (Game.game.wordsOnBoard.length === 0) {
-                alert("You win!");
-                this.testNextBoard();
-
-            } else {
-                alert("You found a word! Words left: " + Game.game.wordsToGet.join(", "));
-                
-            }
-        }
-    }
-}
 
 class Board {
 
-    public letters: string[][];
-    public lettersRight: boolean[][];
+    public content: string[][];
 
     constructor(sizeX: number, sizeY: number, words: string) {
-        this.letters = [];
-        this.lettersRight = [];
+        this.content = [];
         
         const totalSize: number = sizeX * sizeY;
 
-        let uniqueLetters = this.fillArray( totalSize,
-                            this.shuffleArray(
-                            Array.from(this.getUniqueLetters(words))));
+        let uniqueLetters = fillArray( totalSize,
+                            shuffleArray(
+                            Array.from(getUniqueLetters(words))));
 
         if (uniqueLetters!.length > sizeX * sizeY) {
             throw new Error("Too many unique letters for board size");
@@ -159,40 +25,55 @@ class Board {
                 array.push(uniqueLetters.pop()!); 
                 arrayRight.push(false);
             }
-            this.letters.push(array);
-            this.lettersRight.push(arrayRight);
+            this.content.push(array);
         }
 
     }
 
-    fillArray(sizeTo: number, array: string[], ): string[] {
+    shuffle(wordsToShuffle: string[]): string[] {
+        // shuffle words
         
-        let left = sizeTo - array.length;
+        console.log("Shuffle words: " + wordsToShuffle.join(", "));
+        var wordsShuffled: string[] = []
 
-        for (let i = 0; i < left; i++) {
-            const j = Math.floor(Math.random() * (i + 1)); // random index 0..i
-            array.push(array[j]!);   // fill with random existing letters
+        for (var word of wordsToShuffle) {
+            console.log(word);
+
+            if (word.length === 0) continue; // skip found words
+            var randomX = Math.floor(Math.random() * this.content.length);
+            var randomY = Math.floor(Math.random() * (this.content[0]?.length ?? 1));
+
+            var paths = this.knightPaths([randomX, randomY], word.length);
+            
+            if (paths.length === 0) {
+                console.log("No paths found for word " + word);
+                continue;
+            }
+
+            var path = paths[Math.floor(Math.random() * paths.length)];
+
+            console.log("Path for word " + word + ": " + path?.toString());
+
+            word = word.toUpperCase();
+
+            for (var i = 0; i < word.length; i++) {
+                this.content[path![i]![0]]![path![i]![1]] = word[i]!;
+            }
+
+            wordsShuffled.push(word);
+
         }
-        return array;
+
+        console.table(this.content);
+
+        return wordsShuffled;
     }
 
-    resetRightArray() {
-        this.lettersRight = this.letters.map(row => row.map(_ => false));
-    }
 
-    shuffleArray(array: string[]): string[] {
-        
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1)); // random index 0..i
-            [array[i]!, array[j]!] = [array[j]!, array[i]!];   // swap
-        }
-        return array;
-    }
 
-    
     knightPaths(start: [number, number], pathLength: number): [number, number][][] {
-        const rows = this.letters.length;
-        const cols = this.letters[0]?.length ?? 0;
+        const rows = this.content.length;
+        const cols = this.content[0]?.length ?? 0;
 
         const moves: [number, number][] = [
         [2, 1], [1, 2], [-1, 2], [-2, 1],
@@ -204,7 +85,7 @@ class Board {
         const isValid = (x: number, y: number, visited: [number, number][]) => {
             if (x >= 0 && x < rows && y >= 0 && y < cols ) {
                 
-                var letter = this.letters[x]?.[y];
+                var letter = this.content[x]?.[y];
                 var upperLetter = letter?.toUpperCase();
                 if (letter != upperLetter &&
                     !visited.some(([vx, vy]) => vx === x && vy === y)) {
@@ -250,66 +131,22 @@ class Board {
         return paths;
     }
 
-    shuffleBoard() {
-        // shuffle words
-        var wordsToShuffle = this.shuffleArray(Game.game.wordsToGet.map(word => !Game.game.wordsGot.includes(word) ? word : ""));
-        console.log("Shuffle words: " + wordsToShuffle.join(", "));
-
-        Game.game.wordsOnBoard = [];
-
-        for (var word of wordsToShuffle) {
-            console.log(word);
-
-            if (word.length === 0) continue; // skip found words
-            var randomX = Math.floor(Math.random() * this.letters.length);
-            var randomY = Math.floor(Math.random() * (this.letters[0]?.length ?? 1));
-
-            var paths = this.knightPaths([randomX, randomY], word.length);
-            
-            if (paths.length === 0) {
-                console.log("No paths found for word " + word);
-                continue;
-            }
-
-            var path = paths[Math.floor(Math.random() * paths.length)];
-
-            console.log("Path for word " + word + ": " + path?.toString());
-
-            word = word.toUpperCase();
-
-            for (var i = 0; i < word.length; i++) {
-                this.letters[path![i]![0]]![path![i]![1]] = word[i]!;
-            }
-
-            Game.game.wordsOnBoard.push(word);
-
-        }
-
-        console.table(this.letters);
-        this.resetRightArray();
-    }
-
-
-    getUniqueLetters(words: string): Set<string> {
-        const uniqueLetters = new Set<string>();
-        for (const char of words) {
-            uniqueLetters.add(char);
-        }
-        return uniqueLetters;
-    }
 }
 
 class ChessPeice {
 
     public x: number = 0
     public y: number = 0; 
+    public onPeiceMove: () => any;
 
-    constructor(x: number, y: number) {
+    constructor(x: number, y: number, onPeiceMove: () => any) {
         this.x = x;
         this.y = y;
+        this.onPeiceMove = onPeiceMove;
     }
 
     canMove(x: number, y: number): boolean {
+        this.onPeiceMove();
         return true;
     }
 
@@ -317,17 +154,6 @@ class ChessPeice {
         if (this.canMove(x, y)) {
             this.x = x;
             this.y = y;
-
-            Game.game.currentWord += Game.game.board.letters[x]?.[y]?.toLowerCase() ?? "";
-            Game.game.filterPossibleWords();
-            
-            if (Game.game.possibleWords.length > 0) { 
-                console.log("Possible words: " + Game.game.possibleWords.join(", "));
-                console.log("Words on board: " + Game.game.wordsOnBoard.join(", "));
-                Game.game.board.lettersRight[x]![y] = true;
-            }
-
-            console.log("Current word: " + Game.game.currentWord);
 
             return [this.x, this.y];
             
@@ -338,6 +164,7 @@ class ChessPeice {
 
 class Knight extends ChessPeice {
     override canMove(x: number, y: number): boolean {
+       
 
         console.log(`Knight move from (${this.x}, ${this.y}) to (${x}, ${y})`);
         let response: boolean = false;
@@ -353,8 +180,145 @@ class Knight extends ChessPeice {
 
         console.log(`Knight move valid: ${response}`);
 
+        super.canMove(x, y);
+
         return response;
     }
+}
+
+
+class Game {
+
+    static game: Game; // singleton instance 
+    
+    public board: Board;
+    public peice: ChessPeice;
+    public width: number = 0;
+    public height: number = 0;
+
+    public theme: string = "pets"; // future use
+
+    public wordsToGet: string[] = [];
+    public wordsGot: string[] = [];
+    public currentWord: string = "";
+    public possibleWords: string[] = [];
+
+    public wordsOnBoard: string[] = [];
+
+
+    constructor(words: string[], sizeX: number, sizeY: number) {
+        Game.game = this;
+
+        this.wordsToGet = words;
+        this.board = new Board(sizeX, sizeY, words.join(''));
+        this.peice = new Knight(0,0, this.onPlayerPeiceMove.bind(this));
+        this.resetBoard();
+        console.log(this.wordsToGet.slice(0, 20));
+        
+        return this;
+        
+    }
+
+    onPlayerPeiceMove() {
+
+        this.currentWord += this.board.content[this.peice.x]?.[this.peice.y]?.toLowerCase() ?? "";
+        this.filterPossibleWords();
+        
+        if (this.possibleWords.length > 0) { 
+            console.log("Possible words: " + this.possibleWords.join(", "));
+            console.log("Words on board: " + this.wordsOnBoard.join(", "));
+
+        }
+
+        console.log("Current word: " + this.currentWord);
+
+    }
+
+    resetBoard() {
+
+
+        this.wordsOnBoard = [];
+
+        var wordsToShuffle = shuffleArray(Game.game.wordsToGet.map(word => !Game.game.wordsGot.includes(word) ? word : ""))
+        this.board.shuffle(wordsToShuffle);
+
+        this.currentWord = "";
+
+        this.possibleWords = this.possibleWords.map(word => word.toLowerCase());
+        this.wordsOnBoard = this.wordsOnBoard.map(word => word.toLowerCase());
+        this.wordsToGet = this.wordsToGet.map(word => word.toLowerCase());
+        this.wordsGot = this.wordsGot.map(word => word.toLowerCase());
+        
+        this.board.content = this.board.content.map(row => row.map(letter => letter.toLowerCase()));
+        
+    }
+
+    testNextBoard() {
+
+        if (this.testWin()) {
+            alert("You win!");
+            return;
+        }
+
+        if (this.wordsOnBoard.length === 0) {
+            alert("You win!");
+            return;
+        }
+
+    
+    }
+
+    testWin(): boolean {
+        return this.wordsToGet.length === this.wordsGot.length;
+    }
+
+    filterPossibleWords(recursion: boolean = false) {
+        console.log(this.currentWord)
+        this.possibleWords = this.wordsOnBoard.filter(word => word.startsWith(this.currentWord) && !this.wordsGot.includes(word));
+        
+        // if no possible words, reset current word
+        if (this.possibleWords.length === 0 && !recursion) {
+
+            if (this.currentWord.length > 1) {
+                console.log("Trying to minimize current word to see possible strings")
+                
+                const splitArr = this.currentWord.split("");
+                splitArr.shift()!;
+                this.currentWord = splitArr.join("")
+
+
+                this.filterPossibleWords();
+            } 
+            else {
+
+                console.log("No possible words. Resetting current word to: " + Game.game.wordsGot)
+                this.currentWord = "";
+
+                this.filterPossibleWords(true); // avoid infinite recursion
+
+                this.currentWord = Game.game.board.content[this.peice.x]?.[this.peice.y] ?? "";
+                
+            }
+
+        } 
+        // 
+        else if (this.possibleWords.includes(Game.game.currentWord)) {
+            console.log("found word: " + Game.game.currentWord)
+            this.wordsGot.push(Game.game.currentWord);
+            
+
+
+            if (Game.game.wordsOnBoard.length === 0) {
+                alert("You win!");
+                this.testNextBoard();
+
+            } else {
+                alert("You found a word! Words left: " + Game.game.wordsToGet.join(", "));
+                
+            }
+        }
+    }
+
 }
 
 export { Board, ChessPeice, Knight, Game };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {Game} from "./chessPiece.tsx";
+import {GameController} from "./gameController.tsx";
 import "./Cursor.css";
 
 interface TileProps {
@@ -47,7 +47,7 @@ function Tile({ x, y, size, onClick }: TileProps) {
 
   return  <div style={style} onClick={() => onClick(x, y)}> 
             <span style={{ pointerEvents: "none" }}>
-              {Game.game.board.letters[x]?.[y] ?? ""}
+              {GameController.getBoardContent(x, y)}
             </span>
           </div>;
 }
@@ -56,16 +56,14 @@ function Tile({ x, y, size, onClick }: TileProps) {
 
 function Peice () { 
 
-
-  const piece = Game.game.peice;
-  const size = 50;
+  const size = 50; 
 
   const pieceStyle: React.CSSProperties = {
     width: size - 10,
     height: size - 10,
     position: "absolute",
-    left: piece.x * size + 5,
-    top: piece.y * size + 5,
+    left: GameController.getPieceCoordinates()[0] * size + 5,
+    top: GameController.getPieceCoordinates()[1] * size + 5,
     transition: "left 0.3s, top 0.3s", // smooth move
   };
 
@@ -94,7 +92,8 @@ function GameView() {
   const [render, setRender] = useState(0); // state to trigger re-render
   
   function handleTileClick(x: number, y: number) {
-    if (Game.game.peice.move(x, y)) {
+    var move = GameController.tryMove(x,y);
+    if (move) {
       setRender(render + 1); // trigger re-render
     }
   }
@@ -195,25 +194,19 @@ function GameView() {
 
 
       <p style={currentWordStyle}>
-        {Game.game.currentWord || ""}
+        {GameController.getCurrentWord() || ""}
         <span className="cursor">|</span>
       </p>
 
       <p className="text-base text-center text-gray-600 " style={wordsToGoStyle}>
-        {Game.game.wordsOnBoard.map((word) => {
-          if (!Game.game.wordsGot.includes(word)) {
-            return <span>{word.toLowerCase() + "\n"}</span>;
-          } else { return  <>{""}</>  }  //<span style={{ textDecoration: "line-through" }}>{word + "\n"}</span> }
-        })}
-        
+        {GameController.getWordsToGo().map((word: string) => word + "\n")}
       </p>
-
 
       <Grid onClick={handleTileClick}/>
 
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", marginTop: "20px", width: "100%" }}>
         {/* Reset button - left */}
-        <button style={resetButtonStyle} onClick={() => {Game.game.resetBoard(); setRender(0); }}>
+        <button style={resetButtonStyle} onClick={() => {GameController.tryScrambleBoard(); setRender(0); }}>
           🎲
         </button>
 
@@ -237,8 +230,8 @@ function Grid({onClick}: {onClick: ((x: number, y: number) => void)}) {
 
   const boardStyle: React.CSSProperties = {
     display: "grid",
-    gridTemplateColumns: `repeat(${Game.game.width}, ${size}px)`,
-    gridTemplateRows: `repeat(${Game.game.height}, ${size}px)`,
+    gridTemplateColumns: `repeat(${GameController.getBoardDimensions()[0]}, ${size}px)`,
+    gridTemplateRows: `repeat(${GameController.getBoardDimensions()[1]}, ${size}px)`,
     position: "relative",
     border: "20px solid rgba(255, 255, 255, 1)",
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
@@ -247,14 +240,12 @@ function Grid({onClick}: {onClick: ((x: number, y: number) => void)}) {
     marginTop: "10px"
   };
 
-
-
   return (
     <div style={boardStyle}>
-      {Array.from({ length: Game.game.width*Game.game.height }).map((_, index) => {
-        const x = Game.game.width ? index % Game.game.width : 0;
-        const y = Game.game.height ? Math.floor(index / Game.game.height) : 0;
-        return <Tile key={index} x={x} y={y} size={size} onClick={onClick} />;
+      {GameController.getTiles().map((tile: {x: number, y: number}) => {
+        return (
+          <Tile key={`${tile.x}-${tile.y}`} x={tile.x} y={tile.y} size={size} onClick={onClick}/>
+        );
       })}
       <Peice/>
     </div>

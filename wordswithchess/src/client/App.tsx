@@ -1,15 +1,14 @@
 import { navigateTo } from '@devvit/web/client';
+import { useEffect } from 'react';
 //import { useCounter } from './hooks/useCounter';
 import GameView from './pieces/tileMap.tsx';
-import {Game} from './pieces/chessPiece.tsx';
+import { GameController } from './pieces/gameController.js';
 import "./background.css";
 
 
-const game: Game = new Game(6, 6, ["at", "be", "to", "tea", "bat", "tab", "abet", "beta", "beat", "bead", "bad", "cab", "cat", "act", "ace", "face", "fade", "decaf", "cafe", "fade", "deaf", "beef", "feed", "faced", "bade", "bead", "beefed"]);
 
 export const App = () => {
   //const { count, username, loading, increment, decrement } = useCounter();
-  
 
   const backgroundStyle = {
     backgroundImage: 'url("/background5.jpg")',
