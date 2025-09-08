@@ -1,112 +1,8 @@
 import { useState, useEffect } from "react";
-import {GameController} from "./gameController.tsx";
+import {GameController} from "../control/GameController";
+import {CircleButton, Grid} from "./View"
+
 import "./Cursor.css";
-
-interface TileProps {
-  x: number;
-  y: number;
-  size: number;
-  onClick: (x: number, y: number) => void;
-}
-
-function Tile({ x, y, size, onClick }: TileProps) {
-  
-  let color: string = "brown"; // default color, if something fails
-
-  /* if (Game.game.board.lettersRight[x]?.[y]) {
-    color = "lightgreen"; // found letter
-  } else {*/ 
-
-      if (x % 2 === 0 && y % 2 === 0) {
-        color = "rgba(104, 167, 209, 1)"; // light tile
-      } else if (x % 2 === 1 && y % 2 === 1) {
-        // odd row, odd col
-        // white tile
-        color = "rgba(104, 167, 209, 1)";
-      }
-      else {
-        color = "rgba(31, 67, 129, 1)";
-      }
-  //}
-
-  
-  
-  const style: React.CSSProperties = {
-    width: size,
-    height: size,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxSizing: "border-box",
-    position: "relative",
-    backgroundColor: color,
-    border: `0px`,
-    borderRadius: "8px",
-    color: "white",
-  };
-
-  return  <div style={style} onClick={() => onClick(x, y)}> 
-            <span style={{ pointerEvents: "none" }}>
-              {GameController.getBoardContent(x, y)}
-            </span>
-          </div>;
-}
-
-
-
-function Peice () { 
-
-  const size = 50; 
-
-  const pieceStyle: React.CSSProperties = {
-    width: size - 10,
-    height: size - 10,
-    position: "absolute",
-    left: GameController.getPieceCoordinates()[0] * size + 5,
-    top: GameController.getPieceCoordinates()[1] * size + 5,
-    transition: "left 0.3s, top 0.3s", // smooth move
-  };
-
-  return (
-
-      <div style={pieceStyle}> 
-        <img src="/knight.GIF" alt="Knight" style={{ width: "100%", height: "100%" }} />
-      </div>
-  )
-}
-
-interface ButtonProps {
-  onClick: (() => any),
-  content: any
-}
-
-function Button({onClick, content}: ButtonProps) {
-
-  const buttonStyle: React.CSSProperties = {
-    width: "35px",          // same width & height
-    height: "35px",
-    fontSize: "1.2em",
-    fontWeight: "bold",
-    color: "black",
-    backgroundColor: "#ffffffff", // picked a blue (since #ffffffff was invalid)
-    border: "none",
-    borderRadius: "50%",    // makes it a circle
-    cursor: "pointer",
-    display: "flex",        // center content
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
-    transition: "background-color 0.3s, box-shadow 0.3s",
-  };
-
-  return (
-    <button style={buttonStyle} onClick={onClick}>
-          {content}
-    </button>
-  );
-}
-
-
 
 function GameView() {
   const [timeLeft, setTime] = useState(60); // 60 seconds
@@ -148,7 +44,6 @@ function GameView() {
 
     fontSize: '1.5em',
     fontWeight: 'bold',
-    margin: '10px 0',
     color: 'black',
     backgroundColor: 'white',
     padding: '10px',
@@ -246,7 +141,7 @@ function GameView() {
                     marginTop: "10px"}}>
         
         <div style={{display: "flex", justifyContent: "left"}}>
-          <Button onClick={handleResetClick} content={"🎲"}/> 
+          <CircleButton onClick={handleResetClick} content={"🎲"}/> 
         </div>
 
         <p style={timeStyle}>
@@ -254,7 +149,7 @@ function GameView() {
         </p>
 
         <div style={{display: "flex", justifyContent: "right"}}>
-          <Button onClick={handleHintClick} content={"💡"} /> 
+          <CircleButton onClick={handleHintClick} content={"💡"} /> 
         </div>
 
       </div> 
@@ -265,36 +160,5 @@ function GameView() {
 
 }
 
-interface GridProps {
-  onClick: ((x: number, y: number) => any)
-}
 
-function Grid({onClick}: GridProps) {
-  const size = 50;
-
-
-  const boardStyle: React.CSSProperties = {
-    display: "grid",
-    gridTemplateColumns: `repeat(${GameController.getBoardDimensions()[0]}, ${size}px)`,
-    gridTemplateRows: `repeat(${GameController.getBoardDimensions()[1]}, ${size}px)`,
-    position: "relative",
-    border: "20px solid rgba(255, 255, 255, 1)",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
-    backgroundColor: "rgba(104, 167, 209, 1)",
-    borderRadius: "16px",
-    marginTop: "10px"
-  };
-
-  return (
-    <div style={boardStyle}>
-      {GameController.getTiles().map((tile: {x: number, y: number}) => {
-        return (
-          <Tile key={`${tile.x}-${tile.y}`} x={tile.x} y={tile.y} size={size} onClick={onClick}/>
-        );
-      })}
-      <Peice/>
-    </div>
-  );
-}
-
-export default GameView;
+export {GameView};

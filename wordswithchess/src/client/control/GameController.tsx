@@ -1,4 +1,4 @@
-import {Game} from "./chessPiece.tsx";
+import {Game} from "../model/Game.js";
 
 
 class GameController {
