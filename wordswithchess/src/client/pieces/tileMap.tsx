@@ -75,6 +75,38 @@ function Peice () {
   )
 }
 
+interface ButtonProps {
+  onClick: (() => any),
+  content: any
+}
+
+function Button({onClick, content}: ButtonProps) {
+
+  const buttonStyle: React.CSSProperties = {
+    width: "35px",          // same width & height
+    height: "35px",
+    fontSize: "1.2em",
+    fontWeight: "bold",
+    color: "black",
+    backgroundColor: "#ffffffff", // picked a blue (since #ffffffff was invalid)
+    border: "none",
+    borderRadius: "50%",    // makes it a circle
+    cursor: "pointer",
+    display: "flex",        // center content
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
+    transition: "background-color 0.3s, box-shadow 0.3s",
+  };
+
+  return (
+    <button style={buttonStyle} onClick={onClick}>
+          {content}
+    </button>
+  );
+}
+
+
 
 function GameView() {
   const [timeLeft, setTime] = useState(60); // 60 seconds
@@ -98,19 +130,18 @@ function GameView() {
     }
   }
 
-  const style: React.CSSProperties = {
-    position: "relative",
+  function handleResetClick() {
+    GameController.tryScrambleBoard(); 
+    setRender(0); 
   }
 
+  function handleHintClick() {
+    GameController.tryScrambleBoard(); 
+    setRender(0); 
+  }
 
-
-  const currentThemeStyle: React.CSSProperties = {
-    fontSize: '1.2em',
-    fontWeight: 'bold',
-    margin: '10px 0',
-    color: 'white',
-    textShadow: '2px 2px 4px #000000',
-    textAlign: 'center' as const
+  const style: React.CSSProperties = {
+    position: "relative",
   }
 
   const currentWordStyle: React.CSSProperties = {
@@ -167,22 +198,6 @@ function GameView() {
     color: "white",
   }
 
-  const resetButtonStyle: React.CSSProperties = {
-    width: "35px",          // same width & height
-    height: "35px",
-    fontSize: "1.2em",
-    fontWeight: "bold",
-    color: "black",
-    backgroundColor: "#ffffffff", // picked a blue (since #ffffffff was invalid)
-    border: "none",
-    borderRadius: "50%",    // makes it a circle
-    cursor: "pointer",
-    display: "flex",        // center content
-    alignItems: "center",
-    justifyContent: "center",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
-    transition: "background-color 0.3s, box-shadow 0.3s",
-  };
 
 
   const timeStyle: React.CSSProperties = {
@@ -224,18 +239,24 @@ function GameView() {
 
       <Grid onClick={handleTileClick}/>
         
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", marginTop: "20px", width: "100%" }}>
-
-        <button style={resetButtonStyle} onClick={() => {GameController.tryScrambleBoard(); setRender(0); }}>
-          🎲
-        </button>
+      <div style={{ display: "grid", 
+                    gridTemplateColumns: "repeat(3, 1fr)", 
+                    gridTemplateRows: "repeat(1, 1fr)", 
+                    width: "100%",
+                    marginTop: "10px"}}>
+        
+        <div style={{display: "flex", justifyContent: "left"}}>
+          <Button onClick={handleResetClick} content={"🎲"}/> 
+        </div>
 
         <p style={timeStyle}>
           🕚 {timeLeft}s
         </p>
 
-        
-        <img src="/logo.png" alt=":D" style={{ width: "35px", height: "35px" }} />
+        <div style={{display: "flex", justifyContent: "right"}}>
+          <Button onClick={handleHintClick} content={"💡"} /> 
+        </div>
+
       </div> 
       
 
@@ -244,7 +265,11 @@ function GameView() {
 
 }
 
-function Grid({onClick}: {onClick: ((x: number, y: number) => void)}) {
+interface GridProps {
+  onClick: ((x: number, y: number) => any)
+}
+
+function Grid({onClick}: GridProps) {
   const size = 50;
 
 
