@@ -1,4 +1,4 @@
-import { fillArray, shuffleArray, getUniqueLetters } from "./arrayHelper";
+import { fillArray, shuffleArray, getUniqueLetters } from "./ArrayHelper";
 
 class Board {
 

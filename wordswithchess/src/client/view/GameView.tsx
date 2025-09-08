@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import {GameController} from "../control/GameController";
-import {CircleButton, Grid} from "./View"
+import {CircleButton} from "./CircleButton"
+import {Grid} from "./Grid"
 
 import "./Cursor.css";
+import { CurrentWord } from "./CurrentWord";
+import {WordsToGo} from "./WordsToGo"
 
 function GameView() {
   const [timeLeft, setTime] = useState(60); // 60 seconds
@@ -40,61 +43,6 @@ function GameView() {
     position: "relative",
   }
 
-  const currentWordStyle: React.CSSProperties = {
-
-    fontSize: '1.5em',
-    fontWeight: 'bold',
-    color: 'black',
-    backgroundColor: 'white',
-    padding: '10px',
-    borderRadius: '8px',
-    textAlign: 'center' as const,
-    minWidth: '150px',
-    minHeight: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    whiteSpace: 'pre-wrap' as const,
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
-    userSelect: "none", // prevent text selection
-
-
-  }
-
-  const wordsToGoStyle: React.CSSProperties = {
-    columnWidth: "60px",     // target width of each column
-    columnGap: "1rem",        // space between columns
-
-    display: "grid",  
-    gridTemplateColumns: `repeat(4, 1fr)`,
-    gridTemplateRows: `repeat(3, 1fr)`,
-    
-    whiteSpace: "pre-line",
-    color: "white",
-    textShadow: "2px 2px 4px #000000",
-    textAlign: "center" as const,
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
-    backgroundColor: "rgba(0, 0, 0, 0.23)",
-    padding: "1px",
-    borderRadius: "8px",
-    marginTop: "5px",
-    marginBottom: "5px",
-    userSelect: "none", // prevent text selection
-    minHeight: "80px",
-    maxHeight: "80px",       // enforce a minimum height before wrapping
-
-  }
-
-  const gottenStyle: React.CSSProperties = {
-    color: "darkgrey",
-  }
-
-  const toGetStyle: React.CSSProperties = {
-    color: "white",
-  }
-
-
-
   const timeStyle: React.CSSProperties = {
     fontSize: '1.2em',
     fontWeight: 'bold',
@@ -115,22 +63,9 @@ function GameView() {
     <div style={style}>
 
 
-      <p style={currentWordStyle}>
-        {GameController.getCurrentWord() || ""}
-        <span className="cursor">|</span>
-      </p>
+      <CurrentWord/>
 
-      <div className="text-base text-center text-gray-600 " style={wordsToGoStyle}>
-        {GameController.getWordsToGo().map((word: string, i: number) => {
-          
-          if (GameController.getWordsGot().includes(word)) {
-            return <div style={gottenStyle} key={i}> {`${word}`} </div>
-          }
-          else {
-            return <div style={toGetStyle} key={i}> {`${word}`} </div>
-          }
-        })}
-      </div>
+      <WordsToGo/>
 
       <Grid onClick={handleTileClick}/>
         
