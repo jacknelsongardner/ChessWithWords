@@ -114,6 +114,7 @@ function GameView() {
   }
 
   const currentWordStyle: React.CSSProperties = {
+
     fontSize: '1.5em',
     fontWeight: 'bold',
     margin: '10px 0',
@@ -158,10 +159,17 @@ function GameView() {
 
   }
 
+  const gottenStyle: React.CSSProperties = {
+    color: "darkgrey",
+  }
+
+  const toGetStyle: React.CSSProperties = {
+    color: "white",
+  }
 
   const resetButtonStyle: React.CSSProperties = {
-    width: "50px",          // same width & height
-    height: "50px",
+    width: "35px",          // same width & height
+    height: "35px",
     fontSize: "1.2em",
     fontWeight: "bold",
     color: "black",
@@ -180,7 +188,6 @@ function GameView() {
   const timeStyle: React.CSSProperties = {
     fontSize: '1.2em',
     fontWeight: 'bold',
-    margin: '10px 0',
     color: timeLeft <= 10 ? 'red' : 'black', // red if 10 seconds or less
     textAlign: 'center' as const,
     backgroundColor: "white",
@@ -205,26 +212,32 @@ function GameView() {
 
       <div className="text-base text-center text-gray-600 " style={wordsToGoStyle}>
         {GameController.getWordsToGo().map((word: string, i: number) => {
-          return <div key={i}> {`${word}`} </div>
+          
+          if (GameController.getWordsGot().includes(word)) {
+            return <div style={gottenStyle} key={i}> {`${word}`} </div>
+          }
+          else {
+            return <div style={toGetStyle} key={i}> {`${word}`} </div>
+          }
         })}
       </div>
 
       <Grid onClick={handleTileClick}/>
-
+        
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", marginTop: "20px", width: "100%" }}>
-        {/* Reset button - left */}
+
         <button style={resetButtonStyle} onClick={() => {GameController.tryScrambleBoard(); setRender(0); }}>
           🎲
         </button>
 
-        {/* Timer - absolutely centered */}
         <p style={timeStyle}>
           🕚 {timeLeft}s
         </p>
 
-        {/* Logo - right */}
-        <img src="/logo.png" alt=":D" style={{ width: "50px", height: "50px" }} />
-      </div>
+        
+        <img src="/logo.png" alt=":D" style={{ width: "35px", height: "35px" }} />
+      </div> 
+      
 
     </div>
   );

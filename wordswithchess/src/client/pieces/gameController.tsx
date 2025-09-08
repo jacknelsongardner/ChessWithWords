@@ -51,6 +51,13 @@ class GameController {
         } else {return "";}
     }
 
+    static getWordsGot(): string[] {
+        
+        if (GameController.game.currentWord) {
+            return GameController.game.wordsGot;
+        } else {return [];}
+    }
+
     static getWordsToGo(): string[] {
         return GameController.game.wordsOnBoard.map((word: string) => {
             if (GameController.game.wordsGot.includes(word))
