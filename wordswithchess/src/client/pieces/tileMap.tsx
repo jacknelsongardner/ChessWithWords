@@ -137,6 +137,11 @@ function GameView() {
   const wordsToGoStyle: React.CSSProperties = {
     columnWidth: "60px",     // target width of each column
     columnGap: "1rem",        // space between columns
+
+    display: "grid",  
+    gridTemplateColumns: `repeat(4, 1fr)`,
+    gridTemplateRows: `repeat(3, 1fr)`,
+    
     whiteSpace: "pre-line",
     color: "white",
     textShadow: "2px 2px 4px #000000",
@@ -148,8 +153,8 @@ function GameView() {
     marginTop: "5px",
     marginBottom: "5px",
     userSelect: "none", // prevent text selection
-    minHeight: "50px",
-    maxHeight: "50px",       // enforce a minimum height before wrapping
+    minHeight: "80px",
+    maxHeight: "80px",       // enforce a minimum height before wrapping
 
   }
 
@@ -198,9 +203,11 @@ function GameView() {
         <span className="cursor">|</span>
       </p>
 
-      <p className="text-base text-center text-gray-600 " style={wordsToGoStyle}>
-        {GameController.getWordsToGo().map((word: string) => word + "\n")}
-      </p>
+      <div className="text-base text-center text-gray-600 " style={wordsToGoStyle}>
+        {GameController.getWordsToGo().map((word: string, i: number) => {
+          return <div key={i}> {`${word}`} </div>
+        })}
+      </div>
 
       <Grid onClick={handleTileClick}/>
 

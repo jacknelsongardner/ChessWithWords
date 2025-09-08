@@ -146,7 +146,6 @@ class ChessPeice {
     }
 
     canMove(x: number, y: number): boolean {
-        this.onPeiceMove();
         return true;
     }
 
@@ -154,10 +153,14 @@ class ChessPeice {
         if (this.canMove(x, y)) {
             this.x = x;
             this.y = y;
+            console.log("moved");
+            this.onPeiceMove(); 
 
             return [this.x, this.y];
             
         }
+        
+
         return false;
     }
 }
@@ -180,8 +183,6 @@ class Knight extends ChessPeice {
 
         console.log(`Knight move valid: ${response}`);
 
-        super.canMove(x, y);
-
         return response;
     }
 }
@@ -190,7 +191,7 @@ class Knight extends ChessPeice {
 class Game {
 
     static game: Game; // singleton instance 
-    
+
     public board: Board;
     public peice: ChessPeice;
     public width: number = 0;
@@ -223,12 +224,11 @@ class Game {
 
         this.currentWord += this.board.content[this.peice.x]?.[this.peice.y]?.toLowerCase() ?? "";
         this.filterPossibleWords();
-        
-        if (this.possibleWords.length > 0) { 
-            console.log("Possible words: " + this.possibleWords.join(", "));
-            console.log("Words on board: " + this.wordsOnBoard.join(", "));
+    
+        console.log("Possible words: " + this.possibleWords.join(", "));
+        console.log("Words on board: " + this.wordsOnBoard.join(", "));
+        console.log("Words to get: " + this.wordsToGet.join(", "));  
 
-        }
 
         console.log("Current word: " + this.currentWord);
 
@@ -240,7 +240,8 @@ class Game {
         this.wordsOnBoard = [];
 
         var wordsToShuffle = shuffleArray(Game.game.wordsToGet.map(word => !Game.game.wordsGot.includes(word) ? word : ""))
-        this.board.shuffle(wordsToShuffle);
+        
+        this.wordsOnBoard = this.board.shuffle(wordsToShuffle);
 
         this.currentWord = "";
 
@@ -301,7 +302,7 @@ class Game {
             }
 
         } 
-        // 
+        
         else if (this.possibleWords.includes(Game.game.currentWord)) {
             console.log("found word: " + Game.game.currentWord)
             this.wordsGot.push(Game.game.currentWord);
