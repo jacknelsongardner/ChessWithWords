@@ -1,4 +1,4 @@
-import {ChessPeice} from "./Model"
+import {ChessPeice} from "./ChessPeice"
 
 class Knight extends ChessPeice {
     canMove(x: number, y: number): boolean {
