@@ -19,7 +19,7 @@ function Grid({onClick}: GridProps) {
     boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)",
     backgroundColor: "rgba(104, 167, 209, 1)",
     borderRadius: "16px",
-    marginTop: "10px",
+    marginTop: "12px",
     overflow: "hidden"
   };
 

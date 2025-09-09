@@ -73,7 +73,7 @@ function GameView() {
                     gridTemplateColumns: "repeat(3, 1fr)", 
                     gridTemplateRows: "repeat(1, 1fr)", 
                     width: "100%",
-                    marginTop: "10px"}}>
+                    marginTop: "12px"}}>
         
         <div style={{display: "flex", justifyContent: "left"}}>
           <CircleButton onClick={handleResetClick} content={"🎲"}/> 

@@ -5,7 +5,6 @@ function WordsToGo() {
     const wordsToGoStyle: React.CSSProperties = {
         columnWidth: "60px",     // target width of each column
         columnGap: "1rem",        // space between columns
-
         display: "grid",  
         gridTemplateColumns: `repeat(4, 1fr)`,
         gridTemplateRows: `repeat(3, 1fr)`,
@@ -18,7 +17,7 @@ function WordsToGo() {
         backgroundColor: "rgba(0, 0, 0, 0.23)",
         padding: "1px",
         borderRadius: "8px",
-        marginTop: "5px",
+        marginTop: "12px",
         marginBottom: "5px",
         userSelect: "none", // prevent text selection
         minHeight: "80px",

@@ -1,8 +1,16 @@
 import {GameController} from "../control/Control"
+import { useState, useEffect } from "react";
 
 function Peice () { 
 
   const size = 50; 
+
+  const [render, useRender] = useState(false);
+
+  // on start
+  useEffect(() => {
+      GameController.subscribeOnTileSelect(() => {useRender(!render)});
+  }, []) 
 
   const pieceStyle: React.CSSProperties = {
     width: size - 10,
