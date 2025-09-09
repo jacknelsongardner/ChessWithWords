@@ -1,4 +1,4 @@
-import {Game} from "../model/Game.js";
+import {Game} from "../model/Model";
 
 
 class GameController {
@@ -10,8 +10,33 @@ class GameController {
 
     static timesStarted: number;
 
-    static onTimerTick: () => void;
-    static onTileClick: (x: number, y: number) => boolean;
+    static onTimerTick: ((...args: any[]) => void)[] = [];
+    static onTileSelect: ((...args: any[]) => void)[] = [];
+    static onReset: ((...args: any[]) => void)[] = [];
+    static onHint: ((...args: any[]) => void)[] = [];
+
+
+    static executeSubscribed(funcs: ((...args: any[]) => void)[]): void {
+        for (var func of funcs) {
+            func()
+        }
+    }
+
+    static subscribeOnTimerTick(func: ((...args: any[]) => void)): void {
+        this.onTimerTick.push(func);
+    }
+
+    static subscribeOnTileSelect(func: ((...args: any[]) => void)): void {
+        this.onTileSelect.push(func);
+    }
+
+    static subscribeOnReset(func: ((...args: any[]) => void)): void {
+        this.onTimerTick.push(func);
+    }
+
+    static subscribeOnHint(func: ((...args: any[]) => void)): void {
+        this.onTimerTick.push(func);
+    }
 
     static getBoardSize(): number {
         var x = GameController.game.board.content.length
