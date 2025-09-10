@@ -1,87 +1,76 @@
 import { useState, useEffect } from "react";
 import {GameController} from "../control/GameController";
 import {CircleButton} from "./CircleButton"
-import {Grid} from "./Grid"
+import {Grid} from "./Grid";
+import {Timer} from "./Timer";
+import {UI} from "./UI";
+
+
 
 import "./Cursor.css";
 import { CurrentWord } from "./CurrentWord";
-import {WordsToGo} from "./WordsToGo"
+import {WordsToGo} from "./WordsToGo";
+
+
 
 function GameView() {
-  const [timeLeft, setTime] = useState(60); // 60 seconds
 
-  useEffect(() => {
-    if (timeLeft <= 0) return; // stop when time runs out
+    // start game timer
+    useEffect(() => {
+      const timer = setInterval(() => {
+        GameController.tick();
+        console.log("tick");
+      }, 1000);
 
-    const interval = setInterval(() => {
-      setTime((prev) => prev - 1);
-    }, 1000);
+      // stoptimer on unmount
+      return () => clearInterval(timer);
+    },[])
 
-    return () => clearInterval(interval); // cleanup
-  }, [timeLeft]);
-
-  const [render, setRender] = useState(0); // state to trigger re-render
-  
-  function handleTileClick(x: number, y: number) {
-    var move = GameController.tryMove(x,y);
-    if (move) {
-      setRender(render + 1); // trigger re-render
+    function handleResetClick() {
+        GameController.tryScrambleBoard(); 
     }
-  }
 
-  function handleResetClick() {
-    GameController.tryScrambleBoard(); 
-    setRender(0); 
-  }
+    function handleHintClick() {
+        GameController.tryScrambleBoard(); 
+    }
 
-  function handleHintClick() {
-    GameController.tryScrambleBoard(); 
-    setRender(0); 
-  }
+    const style: React.CSSProperties = {
+      position: "relative",
+    }
 
-  const style: React.CSSProperties = {
-    position: "relative",
-  }
-
-  const timeStyle: React.CSSProperties = {
-    fontSize: '1.2em',
-    fontWeight: 'bold',
-    color: timeLeft <= 10 ? 'red' : 'black', // red if 10 seconds or less
-    textAlign: 'center' as const,
-    backgroundColor: "white",
-    padding: '2px',
-    borderRadius: '10px',
-    minWidth: '80px',
-    minHeight: '40px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.37)", // glow effect if 10 seconds or less
-  }
+    const bottomStyle: React.CSSProperties = {
+        display: "grid", 
+        gridTemplateColumns: "repeat(3, 1fr)", 
+        gridTemplateRows: "repeat(1, 1fr)", 
+        width: "100%",
+        marginTop: "12px"
+      }
+  
 
   return (
     <div style={style}>
 
+      <UI subscribe ={ GameController.onTileSelected }>
+        <CurrentWord/>
+      </UI>
 
-      <CurrentWord/>
+      <UI subscribe={ GameController.onTileSelected }>
+          <WordsToGo/>
+      </UI>
 
-      <WordsToGo/>
-
-      <Grid onClick={handleTileClick}/>
+      <UI subscribe={ GameController.onReset }>
+          <Grid/>
+      </UI>
         
-      <div style={{ display: "grid", 
-                    gridTemplateColumns: "repeat(3, 1fr)", 
-                    gridTemplateRows: "repeat(1, 1fr)", 
-                    width: "100%",
-                    marginTop: "12px"}}>
+      <div style={bottomStyle}>
         
         <div style={{display: "flex", justifyContent: "left"}}>
           <CircleButton onClick={handleResetClick} content={"🎲"}/> 
         </div>
 
-        <p style={timeStyle}>
-          🕚 {timeLeft}s
-        </p>
+        <UI subscribe={GameController.onTimerTick}> 
+            <Timer/>
+        </UI>
 
         <div style={{display: "flex", justifyContent: "right"}}>
           <CircleButton onClick={handleHintClick} content={"💡"} /> 

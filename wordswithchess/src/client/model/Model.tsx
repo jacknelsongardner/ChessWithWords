@@ -1,4 +1,4 @@
-import {shuffleArray, fillArray, getUniqueLetters} from "./arrayHelper";
+import {shuffleArray, fillArray, getUniqueLetters} from "./ArrayHelper";
 
 import {Board} from "./Board";
 import {Knight} from "./Knight";

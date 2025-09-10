@@ -2,6 +2,7 @@ import {GameController} from "../control/Control"
 
 function WordsToGo() {
 
+
     const wordsToGoStyle: React.CSSProperties = {
         columnWidth: "60px",     // target width of each column
         columnGap: "1rem",        // space between columns

@@ -1,12 +1,9 @@
 import {GameController} from "../control/Control"
 import {Tile} from "./Tile"
 import {Peice} from "./Peice"
+import {UI} from "./UI"
 
-interface GridProps {
-  onClick: ((x: number, y: number) => any)
-}
-
-function Grid({onClick}: GridProps) {
+function Grid() {
   const size = 50;
 
 
@@ -27,9 +24,10 @@ function Grid({onClick}: GridProps) {
     <div style={boardStyle}>
       {GameController.getTiles().map((tile: {x: number, y: number}) => {
         return (
-          <Tile key={`${tile.x}-${tile.y}`} x={tile.x} y={tile.y} size={size} onClick={onClick}/>
+          <Tile key={`${tile.x}-${tile.y}`} x={tile.x} y={tile.y} size={size}/>
         );
       })}
+
       <Peice/>
     </div>
   );

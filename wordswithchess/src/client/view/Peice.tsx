@@ -1,23 +1,26 @@
-import {GameController} from "../control/Control"
 import { useState, useEffect } from "react";
+import { GameController } from "../control/Control";
 
-function Peice () { 
+function Peice() {
+
+  const [coords, setCoords] = useState(GameController.getPieceCoordinates());
+
+  useEffect(() => {
+    const callback = () => {
+      setCoords(GameController.getPieceCoordinates());
+      console.log("knight notified");
+    };
+    GameController.subscribe("onTileSelect", callback);
+  }, []);
 
   const size = 50; 
-
-  const [render, useRender] = useState(false);
-
-  // on start
-  useEffect(() => {
-      GameController.subscribeOnTileSelect(() => {useRender(!render)});
-  }, []) 
 
   const pieceStyle: React.CSSProperties = {
     width: size - 10,
     height: size - 10,
     position: "absolute",
-    left: GameController.getPieceCoordinates()[0] * size + 5,
-    top: GameController.getPieceCoordinates()[1] * size + 5,
+    left: coords[0] * size + 5,
+    top: coords[1] * size + 5,
     transition: "left 0.3s, top 0.3s", // smooth move
   };
 

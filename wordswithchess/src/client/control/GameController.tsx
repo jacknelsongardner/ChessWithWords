@@ -4,38 +4,64 @@ import {Game} from "../model/Model";
 class GameController {
     
     static words: string[] = ["at", "be", "to", "tea", "bat", "tab", "abet", "beta", "beat", "bead", "bad", "cab", "cat", "act", "ace", "face", "fade", "decaf", "cafe", "fade", "deaf", "beef", "feed", "faced", "bade", "bead", "beefed"];
-    static game: Game = new Game(this.words, 6, 6);
+    static game: Game = new Game(GameController.words, 6, 6);
         
     static loading: boolean;
 
     static timesStarted: number;
 
-    static onTimerTick: ((...args: any[]) => void)[] = [];
-    static onTileSelect: ((...args: any[]) => void)[] = [];
-    static onReset: ((...args: any[]) => void)[] = [];
-    static onHint: ((...args: any[]) => void)[] = [];
+    static onTileSelected: string = "onTileSelect";
+    static onReset: string = "onReset";
+    static onTimerTick: string = "onTimerTick";
+    static onHint: string = "onHint";
+    static onEnd: string = "onEnd";
+
+    static functions: {[key: string] : (() => any)[]} = {}; 
 
 
-    static executeSubscribed(funcs: ((...args: any[]) => void)[]): void {
-        for (var func of funcs) {
-            func()
+    static tick() {
+        if (GameController.game.timerTick()) {
+            GameController.notifySubscribed(GameController.onEnd);
+            GameController.notifySubscribed(GameController.onTimerTick);
+
+        }
+
+        if (GameController.game.testEnd()) {
+            GameController.notifySubscribed(GameController.onEnd);
+        }
+
+        
+        console.log(GameController.getTimeLeft())
+    }
+
+    static notifySubscribed(key: string): void {
+        console.log(GameController.functions);
+        const funcs = GameController.functions[key]
+        
+        console.log("executing for", GameController.functions);
+
+        if (funcs) {
+            for (var func of funcs) {
+                func()
+            }
         }
     }
 
-    static subscribeOnTimerTick(func: ((...args: any[]) => void)): void {
-        this.onTimerTick.push(func);
+    static subscribe(key: string, func: (() => any)) {
+        if (!(key in GameController.functions)) {
+            GameController.functions[key] = []
+        }
+        
+        if (GameController.functions[key]?.push(func))
+        {
+            console.log("Subscribed")
+        } else { console.log("Subscribed failed"); }
     }
 
-    static subscribeOnTileSelect(func: ((...args: any[]) => void)): void {
-        this.onTileSelect.push(func);
-    }
-
-    static subscribeOnReset(func: ((...args: any[]) => void)): void {
-        this.onTimerTick.push(func);
-    }
-
-    static subscribeOnHint(func: ((...args: any[]) => void)): void {
-        this.onTimerTick.push(func);
+    static getTimeLeft() {
+        if (GameController.game.timeLeft) {
+            return GameController.game.timeLeft
+        } else {return 0; }
     }
 
     static getBoardSize(): number {
@@ -61,16 +87,18 @@ class GameController {
     }
 
     static getPieceCoordinates(): [number, number] {
-        return [GameController.game.peice.x, GameController.game.peice.y];
+        if (GameController.game.peice) {
+            return [GameController.game.peice.x, GameController.game.peice.y];
+        } else {return [0,0]}
     }
 
     static tryMove(x: number, y: number): [number, number] | false{
-        return GameController.game.peice.move(x,y);
+        const moved = GameController.game.peice.move(x,y);
+        GameController.notifySubscribed("onTileSelect");
+        return moved;
     } 
 
     static getCurrentWord(): string {
-        
-        
         if (GameController.game.currentWord) {
             return GameController.game.currentWord
         } else {return "";}
@@ -113,7 +141,13 @@ class GameController {
     }
 
     static tryScrambleBoard(): void {
-        return GameController.game.resetBoard();
+        GameController.notifySubscribed("onReset");
+        GameController.game.resetBoard();
+    }
+
+    static getHint(): void {
+        GameController.notifySubscribed("onHint");
+        //GameController.game.gethint
     }
 
 

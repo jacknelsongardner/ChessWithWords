@@ -1,9 +1,10 @@
-import { shuffleArray} from "./arrayHelper";
+import { shuffleArray} from "./ArrayHelper";
 import {Board} from "./Board"
 import {ChessPeice} from "./ChessPeice"
 import {Knight} from "./Knight"
 
 class Game {
+
 
     static game: Game; // singleton instance 
 
@@ -12,6 +13,8 @@ class Game {
     public width: number = 0;
     public height: number = 0;
 
+    public timeLeft: number = 0;
+
     public theme: string = "pets"; // future use
 
     public wordsToGet: string[] = [];
@@ -19,20 +22,67 @@ class Game {
     public currentWord: string = "";
     public possibleWords: string[] = [];
 
-    public wordsOnBoard: string[] = [];
+    public penalty: number = 0;
 
+    public wordsOnBoard: string[] = [];
+    public ticking: boolean = false;
 
     constructor(words: string[], sizeX: number, sizeY: number) {
         Game.game = this;
-
+        this.ticking = true;
         this.wordsToGet = words;
         this.board = new Board(sizeX, sizeY, words.join(''));
         this.peice = new Knight(0,0, this.onPlayerPeiceMove.bind(this));
         this.resetBoard();
         console.log(this.wordsToGet.slice(0, 20));
         
+        this.timeLeft = words.length * 10;
+
+
+        const timer = setInterval(() => {
+
+            console.log("tick");
+        }, 1000);
+
         return this;
         
+    }
+
+    timerTick(): boolean {
+        if (this.timeLeft > 0 && this.ticking) {
+            this.timeLeft--;
+            return true;
+        } 
+
+        return false;
+    }
+
+    testEnd(): boolean {
+        var end = false;
+
+        if (this.timeLeft <= 0) {
+            end = true;
+        }else if (this.allFound()){
+            end = true;
+        }
+
+        if (end) { this.ticking = false; }
+        
+        return end;
+    }
+
+    calculateScore(): number {
+        var score = 0;
+
+        for( const word of this.wordsGot) {
+            for (const letter of word) {
+                score += 10;
+            }
+        }
+
+        score += 5 * this.timeLeft;
+
+        return score;
     }
 
     onPlayerPeiceMove() {
@@ -71,7 +121,7 @@ class Game {
 
     testNextBoard() {
 
-        if (this.testWin()) {
+        if (this.allFound()) {
             alert("You win!");
             return;
         }
@@ -84,8 +134,8 @@ class Game {
     
     }
 
-    testWin(): boolean {
-        return this.wordsToGet.length === this.wordsGot.length;
+    allFound(): boolean {
+        return this.wordsOnBoard.length === this.wordsGot.length;
     }
 
     filterPossibleWords(recursion: boolean = false) {
