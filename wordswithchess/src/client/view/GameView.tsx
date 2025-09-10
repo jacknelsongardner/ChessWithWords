@@ -9,7 +9,7 @@ import {UI} from "./UI";
 
 import "./Cursor.css";
 import { CurrentWord } from "./CurrentWord";
-import {WordsToGo} from "./WordsToGo";
+//import {WordsToGo} from "./WordsToGo";
 
 
 
@@ -39,44 +39,74 @@ function GameView() {
     }
 
     const bottomStyle: React.CSSProperties = {
-        display: "grid", 
-        gridTemplateColumns: "repeat(3, 1fr)", 
-        gridTemplateRows: "repeat(1, 1fr)", 
-        width: "100%",
-        marginTop: "12px"
-      }
+      display: "grid", 
+      gridTemplateColumns: "repeat(3, 1fr)", 
+      gridTemplateRows: "repeat(1, 1fr)", 
+      width: "100%",
+      marginTop: "12px"
+    }
   
+
+    const topWordsStyle: React.CSSProperties = {
+        color: "white",
+        fontFamily: "'Permanent Marker', sans-serif", // marker-style font
+        fontSize: "30px",
+        textShadow: `
+          -2px -2px 0 black,
+          2px -2px 0 black,
+          -2px  2px 0 black,
+          2px  2px 0 black,
+          -2px  0px 0 black,
+          2px  0px 0 black,
+          0px -2px 0 black,
+          0px  2px 0 black
+        `
+    }
 
   return (
     <div style={style}>
 
-      <UI subscribe ={ GameController.onTileSelected }>
-        <CurrentWord/>
-      </UI>
-
-      <UI subscribe={ GameController.onTileSelected }>
-          <WordsToGo/>
-      </UI>
-
-      <UI subscribe={ GameController.onReset }>
-          <Grid/>
-      </UI>
-        
       <div style={bottomStyle}>
         
-        <div style={{display: "flex", justifyContent: "left"}}>
-          <CircleButton onClick={handleResetClick} content={"🎲"}/> 
-        </div>
 
         <UI subscribe={GameController.onTimerTick}> 
-            <Timer/>
+          <Timer/>
         </UI>
 
         <div style={{display: "flex", justifyContent: "right"}}>
           <CircleButton onClick={handleHintClick} content={"💡"} /> 
         </div>
 
-      </div> 
+
+        { /** 
+        <div style={{display: "flex", justifyContent: "left"}}>
+          <CircleButton onClick={handleResetClick} content={"🎲"}/> 
+        </div>
+
+        <div style={{display: "flex", justifyContent: "right"}}>
+          <CircleButton onClick={handleHintClick} content={"💡"} /> 
+        </div>*/}
+
+      </div>
+      
+
+      
+
+      {/* <div style={topWordsStyle} > Your current word is: </div> */}
+
+      
+
+      <UI subscribe ={ GameController.onTileSelected }>
+        <CurrentWord/>
+      </UI>
+
+      <UI subscribe={ GameController.onReset }>
+          <Grid/>
+      </UI>
+        
+      
+       
+      
       
 
     </div>

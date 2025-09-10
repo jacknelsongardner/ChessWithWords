@@ -8,7 +8,7 @@ import "./view/background.css";
 export const App = () => {
 
   const backgroundStyle = {
-    backgroundImage: 'url("/background5.jpg")',
+    backgroundImage: 'url("/background3.jpg")',
     backgroundSize: 'cover',
     backgroundPosition: 'center'
   };

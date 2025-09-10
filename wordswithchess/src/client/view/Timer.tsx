@@ -12,6 +12,8 @@ function Timer() {
         borderRadius: '10px',
         minWidth: '80px',
         minHeight: '40px',
+        maxWidth: '120px',
+        marginBottom: '20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -19,9 +21,11 @@ function Timer() {
     }
 
     return (
-        <p style={timeStyle}>
-            🕚 {GameController.getTimeLeft()}s
-        </p>
+        <div style={{justifyContent: "center"}}>
+            <p style={timeStyle}>
+                🕚 {GameController.getTimeLeft()}s
+            </p>
+        </div>
     );
 }
 

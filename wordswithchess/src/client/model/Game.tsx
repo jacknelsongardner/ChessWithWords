@@ -17,6 +17,8 @@ class Game {
 
     public theme: string = "pets"; // future use
 
+    public wordToMake: string = "";
+
     public wordsToGet: string[] = [];
     public wordsGot: string[] = [];
     public currentWord: string = "";
@@ -38,11 +40,10 @@ class Game {
         
         this.timeLeft = words.length * 10;
 
-
-        const timer = setInterval(() => {
-
-            console.log("tick");
-        }, 1000);
+        if (this.wordsOnBoard.length > 1)
+        {
+            this.wordToMake = this.wordsOnBoard[0]!;
+        }
 
         return this;
         
