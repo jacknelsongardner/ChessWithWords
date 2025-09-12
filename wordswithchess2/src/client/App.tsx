@@ -21,8 +21,8 @@ export const App = () => {
       style={backgroundStyle}
     >
       {/* Greyed out while popup is open */}
-      <div className={`${popupOpen ? "pointer-events-none opacity-50" : ""} w-full h-full`}>
-        <GameView />
+      <div className="blur-bg flex relative flex-col justify-center items-center min-h-screen w-screen gap-4" style={backgroundStyle}> 
+        <GameView/> 
       </div>
 
       {/* Popup */}
