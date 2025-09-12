@@ -1,0 +1,13 @@
+.cursor {
+  display: inline-block;
+  width: 1ch;
+  animation: blink 1s steps(2, start) infinite;
+  color: grey;
+  font-weight: normal;
+}
+
+@keyframes blink {
+  to {
+    visibility: hidden;
+  }
+}
