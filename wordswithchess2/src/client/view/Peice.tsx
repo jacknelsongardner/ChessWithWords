@@ -22,6 +22,8 @@ function Peice() {
     left: coords[0] * size + 5,
     top: coords[1] * size + 5,
     transition: "left 0.3s, top 0.3s", // smooth move
+    zIndex: 2, // push it behind
+
   };
 
   return (

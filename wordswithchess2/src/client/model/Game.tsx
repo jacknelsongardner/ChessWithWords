@@ -31,6 +31,10 @@ class Game {
     public wordsOnBoard: string[] = [];
     public ticking: boolean = false;
 
+    public wordScore: number = 0;
+    public timeScore: number = 0;
+    public finalScore: number = 0;
+
     constructor(words: string[], sizeX: number, sizeY: number) {
         Game.game = this;
         this.ticking = true;
@@ -47,6 +51,12 @@ class Game {
 
         return this;
         
+    }
+
+    calculateFinalStats(): void {
+        this.wordScore = this.wordsGot.length * 100;
+        this.timeScore = this.timeLeft
+        this.finalScore = this.wordScore + this.timeScore
     }
 
     setWordToMake(): void {

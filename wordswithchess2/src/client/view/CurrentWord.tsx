@@ -35,7 +35,7 @@ function CurrentWord() {
 
                         return (
                         <span key={index} style={{ color: currentWordLength > index ? "black" : "grey" }}>
-                            {cursor && <span className="cursor" style={{marginRight:"-5px", marginLeft:"-5px"}}>|</span>}
+                            {cursor && <span className="cursor" style={{marginRight:"-5px", marginLeft:"-5px", color: "black"}}>|</span>}
                             {letter}
                         </span>
                         );

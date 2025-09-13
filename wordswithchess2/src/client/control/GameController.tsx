@@ -4,12 +4,14 @@ import {Game} from "../model/Model";
 class GameController {
     
     static words: string[] = ["at", "be", "to", "tea", "bat", "tab", "abet", "beta", "beat", "bead", "bad", "cab", "cat", "act", "ace", "face", "fade", "decaf", "cafe", "fade", "deaf", "beef", "feed", "faced", "bade", "bead", "beefed"];
-    static game: Game = new Game(GameController.words, 6, 6);
+    static game: Game = new Game(GameController.words, 4, 4);
         
     static loading: boolean;
 
+    static paused: boolean;
     static timesStarted: number;
 
+    static onStart: string = "onStart";
     static onTileSelected: string = "onTileSelect";
     static onReset: string = "onReset";
     static onTimerTick: string = "onTimerTick";
@@ -19,15 +21,28 @@ class GameController {
     static functions: {[key: string] : (() => any)[]} = {}; 
 
 
+    static canMove(x: number, y: number) {
+        if (Game.game.peice.canMove(x,y)) {
+            return true;
+        }
+        return false;
+    }
+
+    static startGame() {
+        console.log("starting game");
+        GameController.notifySubscribed(GameController.onStart);
+    }
+
     static tick() {
-        if (GameController.game.timerTick()) {
-            GameController.notifySubscribed(GameController.onTimerTick);
-        }
+        if (!GameController.paused) {
+            if (GameController.game.timerTick()) {
+                GameController.notifySubscribed(GameController.onTimerTick);
+            }
 
-        if (GameController.game.testEnd()) {
-            GameController.notifySubscribed(GameController.onEnd);
+            if (GameController.game.testEnd()) {
+                GameController.notifySubscribed(GameController.onEnd);
+            }
         }
-
         
         console.log(GameController.getTimeLeft())
     }
@@ -58,8 +73,9 @@ class GameController {
         
         if (GameController.functions[key]?.push(func))
         {
-            console.log("Subscribed")
-        } else { console.log("Subscribed failed"); }
+            console.log("Subscribed", key);
+        } 
+        else { console.log("Subscribed failed"); }
     }
 
     static getTimeLeft() {

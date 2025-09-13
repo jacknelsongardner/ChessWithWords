@@ -22,15 +22,21 @@ function Grid() {
 
   return (
     <div style={boardStyle}>
+
       {GameController.getTiles().map((tile: {x: number, y: number}) => {
         return (
-          <Tile key={`${tile.x}-${tile.y}`} x={tile.x} y={tile.y} size={size}/>
+          <div>
+            <Tile key={`${tile.x}-${tile.y}`} x={tile.x} y={tile.y} size={size}/>
+            
+          </div>
         );
       })}
-
+    
       <Peice/>
     </div>
   );
 }
+
+
 
 export {Grid}

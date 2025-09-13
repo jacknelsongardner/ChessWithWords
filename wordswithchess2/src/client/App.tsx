@@ -1,12 +1,25 @@
 // App.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { GameView } from "./view/View";
 import { GameController } from "./control/GameController.js";
 import "./view/background.css";
 import { Popup } from "./Popup";
 import { Slideshow } from "./Slideshow";
+import { CountdownCircle } from "./Countdown";
 
 export const App = () => {
+
+  useEffect(() => {
+      GameController.subscribe(GameController.onEnd, 
+        () => {
+          //setDone(true); 
+          //setPopupOpen(true);
+          //setHowToPlay(false);
+          //setStarted(false);
+          
+      });
+  }, []);
+  
   const [popupOpen, setPopupOpen] = useState(true); // starts open
 
   const backgroundStyle = {
@@ -15,29 +28,115 @@ export const App = () => {
     backgroundPosition: "center",
   };
 
+  const [howToPlay, setHowToPlay] = useState(false);
+  const [started, setStarted] = useState(false);
+  const [done, setDone] = useState(false);
+
+  const [countDown, setCountDown] = useState(4);
+
+  function startCountdown() {
+    setStarted(true);     // show the countdown
+    setHowToPlay(false);
+    setCountDown(4);      // reset to 3 before starting
+
+    let timer = setInterval(() => {
+      setCountDown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setPopupOpen(false); // close popup at the end
+          GameController.startGame();
+
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+
+
   return (
     <div
       className="blur-bg flex relative flex-col justify-center items-center min-h-screen w-screen gap-4"
       style={backgroundStyle}
     >
       {/* Greyed out while popup is open */}
+      { started &&
       <div className="blur-bg flex relative flex-col justify-center items-center min-h-screen w-screen gap-4" style={backgroundStyle}> 
         <GameView/> 
       </div>
+      }
+      
 
       {/* Popup */}
       <Popup isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
-        <Popup isOpen={popupOpen} onClose={() => setPopupOpen(false)}>
+        {started && !howToPlay &&
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              
+            }}
+          >
+            <CountdownCircle count={countDown} />
+          </div>
+        }
+        
+        {!howToPlay && !started &&
+          <div style={{justifyContent: "center", 
+                       alignItems: "center", 
+                       display: "flex", 
+                       flexDirection: "column",
+                     }}>
+
+            <img src="wordswithchess.png" style={{ maxWidth: "250px", 
+                                                    //marginBottom: "50px"
+                                                }}/>
+            <img src="logo.png" style={{ maxWidth: "150px", 
+                                         //marginBottom: "-50px"
+                                      }}/>
+
+            <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow"
+                    onClick={() => setHowToPlay(true)}>
+              How to play
+            </button>
+
+            <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg shadow"
+                    onClick={() => startCountdown()}>
+                  Start Game
+            </button>
+          </div>
+        }
+
+        { howToPlay &&
           <Slideshow
-            onFinish={() => setPopupOpen(false)}
+            onFinish={() => startCountdown()}
             slides={[
-              { image: "/images/slide1.png", text: "Welcome to the game! Here’s how it works." },
-              { image: "/images/slide2.png", text: "Defeat enemies by solving puzzles." },
-              { image: "/images/slide3.png", text: "Collect rewards and level up!" },
+              { image: "/images/slide1.png", text: "The knight moves in an L shape around the board." },
+              { image: "/images/slide2.png", text: "Collect letters around the board to spell words." },
+              { image: "/images/slide3.png", text: "Longer words are worth more points." },
+              { image: "/images/slide3.png", text: "Watch the time! Spell all of todays words to get bonus points!." },
               { image: "/images/slide4.png", text: "Good luck! Let's get started." },
             ]}
-          />
-        </Popup>
+        />}
+
+        { done && 
+          <div style={{justifyContent: "center", 
+                       alignItems: "center", 
+                       display: "flex", 
+                       flexDirection: "column",
+                     }}>
+              <div> Score break down: </div>
+              <div>   Word Score : {GameController.getFinalStats()[0]}</div>
+              <div> + Time Bonus : {GameController.getFinalStats()[1]}</div>
+              <div>               ______ </div>
+              <div> Final Score : {GameController.getFinalStats()[2]}</div>
+
+
+          </div>
+
+        }
 
       </Popup>
     </div>

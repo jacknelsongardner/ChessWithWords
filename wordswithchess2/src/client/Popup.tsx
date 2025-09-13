@@ -1,6 +1,7 @@
 // Popup.tsx
 import { ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { createPortal } from "react-dom";
 
 interface PopupProps {
   isOpen: boolean;
@@ -9,7 +10,7 @@ interface PopupProps {
 }
 
 function Popup({ isOpen, onClose, children }: PopupProps) {
-  return (
+  return createPortal(
     <AnimatePresence>
       {isOpen && (
         <>
@@ -22,27 +23,33 @@ function Popup({ isOpen, onClose, children }: PopupProps) {
             onClick={onClose} // close if you click outside
           />
 
-          {/* Popup content */}
+          {/* Centered popup */}
           <motion.div
-            className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50 
-                       bg-white rounded-2xl shadow-lg p-6 w-11/12 max-w-md"
-            initial={{ y: "100%", opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: "100%", opacity: 0 }}
-            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                       z-50 bg-white rounded-2xl shadow-lg p-6 w-11/12 max-w-md"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.8, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
           >
             {children}
-            <button
-              onClick={onClose}
-              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow"
-            >
-              Close
-            </button>
+            
+            {/* <div style={{justifyContent: "center", alignItems: "center"}}>
+
+              <button
+                onClick={onClose}
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow"
+              >
+              I already know how to play
+              </button>
+            </div>*/}
+            
           </motion.div>
         </>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
-};
+}
 
-export {Popup}
+export { Popup };

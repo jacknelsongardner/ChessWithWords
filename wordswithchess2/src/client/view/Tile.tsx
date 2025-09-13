@@ -1,5 +1,6 @@
 import { text } from "express";
 import {GameController} from "../control/Control"
+import { useEffect, useState } from "react";
 
 
 interface TileProps {
@@ -10,6 +11,12 @@ interface TileProps {
 
 function Tile({ x, y, size }: TileProps) {
   
+  useEffect(() => {
+   GameController.subscribe(GameController.onTileSelected, () => setCanMove((val) => !val))
+  }, []);
+
+  const [canMove, setCanMove] = useState(false);
+
   let tileColor: string = "brown"; // default color, if something fails
   let textColor: string = "rgba(255, 255, 255, 1)";
 
@@ -49,10 +56,38 @@ function Tile({ x, y, size }: TileProps) {
     textShadow: '1px 1px 2px rgba(0, 0, 0, 0.7)',
   };
 
+
+  function CenterDot() {
+    return (<div
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "28px",
+        height: "28px",
+        borderRadius: "50%",
+        backgroundColor: "rgba(0, 0, 0, 0.22)",
+        pointerEvents: "none",
+        zIndex: 0, // push it behind
+      }}
+    />)
+
+  }
+
   return  <div style={textStyle} onClick={() => GameController.tryMove(x, y)}> 
-            <span style={{ pointerEvents: "none" }}>
+            {GameController.canMove(x,y) &&
+              <div>
+                <CenterDot/>
+              </div>
+            }
+            
+            <span style={{ pointerEvents: "none", zIndex: 1 }}>
               {GameController.getBoardContent(x, y)}
             </span>
+
+            
+            
           </div>;
 }
 
