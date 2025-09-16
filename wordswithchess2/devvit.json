@@ -13,12 +13,14 @@
     "dir": "dist/server",
     "entry": "index.cjs"
   },
-  "media": {},
+  "media": {
+    "dir": "assets"
+  },
   "menu": {
     "items": [
       {
         "label": "Create a new post",
-        "description": "wordswithchess2",
+        "description": "Create another puzzle",
         "location": "subreddit",
         "forUserType": "moderator",
         "endpoint": "/internal/menu/post-create"
@@ -30,5 +32,20 @@
   },
   "dev": {
     "subreddit": "wordswithchess2_dev"
+  },
+  "scheduler": {
+    "tasks": {
+      "regular-interval-example-task": {
+        "endpoint": "/internal/scheduler/regular-interval-task-example",
+        "cron": "0 0,6,12,18 * * 0-6"
+      }
+    }
+  },
+  "reddit": {
+    "asUser": [
+      
+      "SUBMIT_COMMENT",
+      "SUBSCRIBE_TO_SUBREDDIT"
+    ]
   }
 }

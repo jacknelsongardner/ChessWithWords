@@ -3,6 +3,7 @@ import { InitResponse, IncrementResponse, DecrementResponse } from '../shared/ty
 import { redis, reddit, createServer, context, getServerPort } from '@devvit/web/server';
 import { createPost } from './core/post';
 
+
 const app = express();
 
 // Middleware for JSON body parsing
@@ -108,6 +109,7 @@ router.post('/internal/on-app-install', async (_req, res): Promise<void> => {
   }
 });
 
+
 router.post('/internal/menu/post-create', async (_req, res): Promise<void> => {
   try {
     const post = await createPost();
@@ -123,6 +125,7 @@ router.post('/internal/menu/post-create', async (_req, res): Promise<void> => {
     });
   }
 });
+
 
 // Use router middleware
 app.use(router);

@@ -6,11 +6,20 @@ export const createPost = async () => {
     throw new Error('subredditName is required');
   }
 
+  
   return await reddit.submitCustomPost({
+    subredditName,
+    title: 'Today’s theme: SPACE 23',
     splash: {
-      appDisplayName: 'wordswithchess2',
+      appDisplayName: 'Words with Chess',
+      heading: "Today's Theme: \n SPACE",
+      description: 'Words to spell: \n abet \n cat \n dog \n blob',
+      backgroundUri: 'splash.jpg',
+      appIconUri: 'icon.png',
+      buttonLabel: 'Start',
     },
-    subredditName: subredditName,
-    title: 'wordswithchess2',
+    postData: {
+      // optional: any data your app needs
+    }
   });
 };

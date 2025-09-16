@@ -40,11 +40,20 @@ class GameController {
             }
 
             if (GameController.game.testEnd()) {
+                GameController.game.calculateFinalStats();
                 GameController.notifySubscribed(GameController.onEnd);
             }
         }
         
         console.log(GameController.getTimeLeft())
+    }
+
+    static getFinalStats() {
+        return [
+            GameController.game.wordScore,
+            GameController.game.timeScore,
+            GameController.game.finalScore
+        ]
     }
 
     static notifySubscribed(key: string): void {

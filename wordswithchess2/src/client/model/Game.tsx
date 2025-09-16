@@ -57,6 +57,9 @@ class Game {
         this.wordScore = this.wordsGot.length * 100;
         this.timeScore = this.timeLeft
         this.finalScore = this.wordScore + this.timeScore
+
+        console.log(this.wordScore)
+        console.log(this.wordsGot)
     }
 
     setWordToMake(): void {
@@ -86,7 +89,10 @@ class Game {
             end = true;
         }
 
-        if (end) { this.ticking = false; }
+        if (end) { 
+            this.calculateFinalStats(); 
+            this.ticking = false; 
+        }
         
         return end;
     }

@@ -17,6 +17,14 @@ function Slideshow({ slides, onFinish }: SlideshowProps) {
   const isLast = index === slides.length - 1;
   const isFirst = index === 0;
 
+  const bottomStyle: React.CSSProperties = {
+      display: "grid", 
+      gridTemplateColumns: "repeat(3, 1fr)", 
+      gridTemplateRows: "repeat(1, 1fr)", 
+      width: "100%",
+      marginTop: "12px"
+  }
+
   return (
     <div className="flex flex-col items-center text-center">
       {/* Image */}
@@ -25,6 +33,8 @@ function Slideshow({ slides, onFinish }: SlideshowProps) {
         alt={`Slide ${index + 1}`}
         className="max-h-64 object-contain rounded-lg shadow mb-4"
       />
+
+      
 
       {/* Text */}
       <p className="text-gray-800 mb-6">{slides[index]!.text}</p>

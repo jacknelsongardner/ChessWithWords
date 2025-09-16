@@ -35,19 +35,46 @@ class Board {
         console.log("Shuffle words: " + wordsToShuffle.join(", "));
         var wordsShuffled: string[] = []
 
+
         for (var word of wordsToShuffle) {
             console.log(word);
 
-            if (word.length === 0) continue; // skip found words
-            var randomX = Math.floor(Math.random() * this.content.length);
-            var randomY = Math.floor(Math.random() * (this.content[0]?.length ?? 1));
 
-            var paths = this.knightPaths([randomX, randomY], word.length);
-            
-            if (paths.length === 0) {
-                console.log("No paths found for word " + word);
-                continue;
+            function shuffleArrayInPlace(array: [number, number][]): void {
+                for (let i = array.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    let temp = array[i]!
+                    array[i] = array[j]!
+                    array[j] = temp!
+                }
             }
+
+            let usedSpots: [number, number][] = [];
+            for (let x = 0; x < this.content.length; x++) {
+                for (let y = 0; y < this.content[0]!.length; y++) {
+                    usedSpots.push([x, y]);
+                }
+            }
+
+            shuffleArrayInPlace(usedSpots); 
+
+            var paths = [];
+
+            while (true) {
+                if (word.length === 0) continue; // skip found words
+                var spotToTry = usedSpots.pop();
+
+                paths = this.knightPaths([spotToTry![0], spotToTry![1]], word.length);
+                
+                if (paths.length === 0) {
+
+                    if (usedSpots.length == 0) { break; }
+                    console.log("No paths found for word " + word);
+                    continue;
+                } else {break; }
+            }
+
+            if (paths.length === 0) { continue; }
 
             var path = paths[Math.floor(Math.random() * paths.length)];
 
@@ -86,11 +113,13 @@ class Board {
                 
                 var letter = this.content[x]?.[y];
                 var upperLetter = letter?.toUpperCase();
-                if (letter != upperLetter &&
-                    !visited.some(([vx, vy]) => vx === x && vy === y)) {
+
+                if ((letter != upperLetter &&
+                    !visited.some(([vx, vy]) => vx === x && vy === y))) {
                     console.log("valid move")
                     return true;
                 }
+
                 console.log("invalid move")
                 return false;
             }
@@ -112,9 +141,9 @@ class Board {
                 const nx = x + dx;
                 const ny = y + dy;
                 if (isValid(nx, ny, visited)) {
-                visited.push([nx, ny]);
-                backtrack(nx, ny, visited);
-                visited.pop(); // backtrack
+                    visited.push([nx, ny]);
+                    backtrack(nx, ny, visited);
+                    visited.pop(); // backtrack
                 }
             }
         };

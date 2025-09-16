@@ -9,18 +9,16 @@ import { CountdownCircle } from "./Countdown";
 
 export const App = () => {
 
-  useEffect(() => {
-      GameController.subscribe(GameController.onEnd, 
-        () => {
-          //setDone(true); 
-          //setPopupOpen(true);
-          //setHowToPlay(false);
-          //setStarted(false);
-          
-      });
-  }, []);
   
   const [popupOpen, setPopupOpen] = useState(true); // starts open
+   
+  useEffect(() => {
+      GameController.subscribe(GameController.onEnd, onEndGame)
+  }, []);
+  
+  function onEndGame() {
+      setDone(true);
+  }
 
   const backgroundStyle = {
     backgroundImage: 'url("/background3.jpg")',
@@ -60,6 +58,27 @@ export const App = () => {
       className="blur-bg flex relative flex-col justify-center items-center min-h-screen w-screen gap-4"
       style={backgroundStyle}
     >
+
+        {/* Overlay GIF */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+            opacity: done ? 0 : 1
+          }}
+        >
+          {done && 
+          <img src="confetti.gif" alt="Overlay" style={{ maxWidth: "80%", maxHeight: "80%" }} />
+          }
+        </div>
+
       {/* Greyed out while popup is open */}
       { started &&
       <div className="blur-bg flex relative flex-col justify-center items-center min-h-screen w-screen gap-4" style={backgroundStyle}> 
@@ -121,22 +140,8 @@ export const App = () => {
             ]}
         />}
 
-        { done && 
-          <div style={{justifyContent: "center", 
-                       alignItems: "center", 
-                       display: "flex", 
-                       flexDirection: "column",
-                     }}>
-              <div> Score break down: </div>
-              <div>   Word Score : {GameController.getFinalStats()[0]}</div>
-              <div> + Time Bonus : {GameController.getFinalStats()[1]}</div>
-              <div>               ______ </div>
-              <div> Final Score : {GameController.getFinalStats()[2]}</div>
+        
 
-
-          </div>
-
-        }
 
       </Popup>
     </div>

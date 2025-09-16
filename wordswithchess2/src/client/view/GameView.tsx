@@ -5,12 +5,10 @@ import {Grid} from "./Grid";
 import {Timer} from "./Timer";
 import {UI} from "./UI";
 import { Peice } from "./Peice";
-
+import { Popup } from "../Popup"
 
 import "./Cursor.css";
 import { CurrentWord } from "./CurrentWord";
-//import {WordsToGo} from "./WordsToGo";
-
 
 
 function GameView() {
@@ -18,9 +16,14 @@ function GameView() {
 
     useEffect(() => {
       GameController.subscribe(GameController.onStart, startTimer)
+      GameController.subscribe(GameController.onEnd, endGame)
     }, [])
 
-    
+    const [popup, setPopup] = useState(false);
+
+    function endGame() {
+      setPopup(true);
+    }
 
     // start game timer
     function startTimer() {
@@ -60,6 +63,44 @@ function GameView() {
   return (
     <div style={style}>
 
+
+
+        <Popup isOpen={popup} onClose={() => setPopup(true)}>
+          <div style={{justifyContent: "center", 
+                                alignItems: "center", 
+                                display: "flex", 
+                                flexDirection: "column",
+                              }}>
+
+              <img style={{maxWidth: "200px"}} src={"redditGuy.png"}/>
+              
+              <div> Score break down: </div>
+              <div>   Word Score : {GameController.game.wordScore}</div>
+              <div> + Time Bonus : {GameController.game.timeScore}</div>
+              <div>               ______ </div>
+              <div> Final Score : {GameController.game.finalScore}</div>
+
+              <button
+                className="mt-4 px-2 py-1 bg-red-600 text-white rounded-lg shadow flex items-center space-x-2 text-sm"
+                onClick={() => setPopup(false)}
+              >
+                <span>Comment your score!</span>
+                <img src="redditHead.png" alt="Reddit" className="w-5 h-5" />
+              </button>
+             
+             {/* 
+              <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg shadow"
+                      onClick={() => {
+                        
+                        setPopup(false);
+                      }}>
+                Try again
+              </button>
+              */}
+
+          </div>
+        </Popup>
+
         <UI subscribe={GameController.onTimerTick}> 
           <Timer/>
         </UI>
@@ -83,19 +124,21 @@ function GameView() {
       
       <div style={bottomStyle}>
         
-        <div style={{display: "flex", justifyContent: "left"}}>
-          <CircleButton onClick={handleHintClick} content={"💡"} /> 
-          <CircleButton onClick={handleHintClick} content={"⏩"} /> 
+        <div style={{display: "flex", justifyContent: "right"}}>
+          <CircleButton onClick={handleHintClick} content={"↩️"} />
+          <CircleButton onClick={handleHintClick} content={"↪️"} /> 
         </div>
+       
         
         <div>
           {/* empy */}
         </div>
 
-        <div style={{display: "flex", justifyContent: "right"}}>
-          <CircleButton onClick={handleHintClick} content={"↩️"} />
-          <CircleButton onClick={handleHintClick} content={"↪️"} /> 
+        <div style={{display: "flex", justifyContent: "left"}}>
+          <CircleButton onClick={handleHintClick} content={"💡"} /> 
+          <CircleButton onClick={handleHintClick} content={"⏩"} /> 
         </div>
+
 
       </div>
        

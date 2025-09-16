@@ -11,7 +11,7 @@ interface PopupProps {
 
 function Popup({ isOpen, onClose, children }: PopupProps) {
   return createPortal(
-    <AnimatePresence>
+    <AnimatePresence >
       {isOpen && (
         <>
           {/* Greyed-out background */}
@@ -27,6 +27,7 @@ function Popup({ isOpen, onClose, children }: PopupProps) {
           <motion.div
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                        z-50 bg-white rounded-2xl shadow-lg p-6 w-11/12 max-w-md"
+            style={{ backgroundColor: "white" }}
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.8, opacity: 0 }}
