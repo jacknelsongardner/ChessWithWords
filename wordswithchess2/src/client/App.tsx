@@ -7,6 +7,8 @@ import { Popup } from "./Popup";
 import { Slideshow } from "./Slideshow";
 import { CountdownCircle } from "./Countdown";
 
+console.log("opening client");
+  
 export const App = () => {
 
   
@@ -71,11 +73,12 @@ export const App = () => {
             justifyContent: "center",
             alignItems: "center",
             zIndex: 9999,
-            opacity: done ? 0 : 1
+            opacity: done ? 1 : 0,
+            pointerEvents: "none"
           }}
         >
           {done && 
-          <img src="confetti.gif" alt="Overlay" style={{ maxWidth: "80%", maxHeight: "80%" }} />
+          <img src="confetti.gif" alt="Overlay" style={{ width: "100%", height: "100%" }} />
           }
         </div>
 

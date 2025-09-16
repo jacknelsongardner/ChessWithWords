@@ -9,7 +9,7 @@ export const createPost = async () => {
   
   return await reddit.submitCustomPost({
     subredditName,
-    title: 'Today’s theme: SPACE 23',
+    title: 'Puzzle #1: A walk in the park',
     splash: {
       appDisplayName: 'Words with Chess',
       heading: "Today's Theme: \n SPACE",

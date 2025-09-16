@@ -20,6 +20,8 @@ class GameController {
 
     static functions: {[key: string] : (() => any)[]} = {}; 
 
+    static hint: [number, number] = [-1, -1];
+    static hintsEnabled: boolean = false;
 
     static canMove(x: number, y: number) {
         if (Game.game.peice.canMove(x,y)) {
@@ -123,6 +125,13 @@ class GameController {
 
     static tryMove(x: number, y: number): [number, number] | false{
         const moved = GameController.game.peice.move(x,y);
+
+        if (GameController.game.peice.x == GameController.hint[0] &&
+            GameController.game.peice.y == GameController.hint[1]
+        ) {
+            GameController.hintsEnabled = false;
+        }
+
         GameController.notifySubscribed("onTileSelect");
         return moved;
     } 
@@ -175,10 +184,20 @@ class GameController {
     }
 
     static getHint(): void {
-        GameController.notifySubscribed("onHint");
-        //GameController.game.gethint
+        GameController.hint = GameController.game.nextHint()!;
+        GameController.hintsEnabled = true;
+        
+        GameController.notifySubscribed(GameController.onTileSelected);
     }
 
+    static trySkip(): void {
+        GameController.game.skipWord();
+        GameController.hintsEnabled = false;
+        GameController.notifySubscribed(GameController.onTileSelected);
+        console.log("word to make now : ", GameController.game.wordToMake);
+    }
+
+    
 
 
 }

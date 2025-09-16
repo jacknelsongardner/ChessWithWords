@@ -29,11 +29,20 @@ class Game {
     public penalty: number = 0;
 
     public wordsOnBoard: string[] = [];
+    public wordsLeft: string[] = [];
+
     public ticking: boolean = false;
 
     public wordScore: number = 0;
     public timeScore: number = 0;
     public finalScore: number = 0;
+    public completeScore: number = 0;
+
+    public wordHints: Record<string, [number, number][]> = {}; // map from word -> hints
+    public currentHint: [number, number][] = [];
+    public hintIndex: number = 0;
+
+    public wordsWin: number = 0;
 
     constructor(words: string[], sizeX: number, sizeY: number) {
         Game.game = this;
@@ -55,20 +64,37 @@ class Game {
 
     calculateFinalStats(): void {
         this.wordScore = this.wordsGot.length * 100;
-        this.timeScore = this.timeLeft
+       
+        if (this.wordsGot.length == this.wordsOnBoard.length)
+        {
+            this.completeScore = 100;
+        }
+
+        this.timeScore = this.timeLeft;
+        
         this.finalScore = this.wordScore + this.timeScore
 
         console.log(this.wordScore)
         console.log(this.wordsGot)
     }
 
-    setWordToMake(): void {
-        if (this.wordsOnBoard.length > 1 && 
-            this.wordIndex < this.wordsOnBoard.length)
+    setWordToMake(skipped?: boolean): void {
+        
+        if (this.wordsOnBoard.length >= 1)
         {
-            this.wordToMake = this.wordsOnBoard[this.wordIndex]!;
-            this.wordIndex++;
+            if (skipped) {
+                this.wordsOnBoard.push(this.wordToMake)
+            }
+
+            this.wordToMake = this.wordsOnBoard.shift()!;;
+            this.resetHint();
         }
+    }
+
+    skipWord(): void {
+        
+        this.setWordToMake(true);
+
     }
 
     timerTick(): boolean {
@@ -125,7 +151,10 @@ class Game {
             this.currentWord = "";
 
             this.setWordToMake();
+        } else {
+            this.incrementHint();
         }
+
 
         console.log("Possible words: " + this.possibleWords.join(", "));
         console.log("Words on board: " + this.wordsOnBoard.join(", "));
@@ -141,11 +170,15 @@ class Game {
 
         this.wordsOnBoard = [];
 
-        var wordsToShuffle = shuffleArray(Game.game.wordsToGet.map(word => !Game.game.wordsGot.includes(word) ? word : ""))
+        var wordsToShuffle = shuffleArray(Game.game.wordsToGet.map(word => !Game.game.wordsGot.includes(word) ? word : ""));
         
-        this.wordsOnBoard = this.board.shuffle(wordsToShuffle);
+        [this.wordsOnBoard, this.wordHints] = this.board.shuffle(wordsToShuffle)!;
+        
+        this.wordsLeft = this.wordsOnBoard;
 
         this.currentWord = "";
+
+
 
         this.possibleWords = this.possibleWords.map(word => word.toLowerCase());
         this.wordsOnBoard = this.wordsOnBoard.map(word => word.toLowerCase());
@@ -153,13 +186,44 @@ class Game {
         this.wordsGot = this.wordsGot.map(word => word.toLowerCase());
         
         this.board.content = this.board.content.map(row => row.map(letter => letter.toLowerCase()));
-        
+        this.wordsWin = this.wordsOnBoard.length;
+        this.resetHint();
     }
 
     allFound() {
-        return this.wordsGot.length === this.wordsOnBoard.length;
+        return this.wordsGot.length === this.wordsWin;
     }
 
+
+    resetHint() {
+        this.hintIndex = 0;
+        this.currentHint = this.wordHints[this.wordToMake.toUpperCase()]!;
+    }
+
+    incrementHint() {
+        console.log("hintincrement")
+        console.log(this.currentHint);
+        console.log(this.hintIndex);
+        console.log(this.wordHints);
+
+        if ( this.peice.x == this.nextHint()![0]! &&
+             this.peice.y == this.nextHint()![1]! ) 
+        {
+                this.hintIndex++;
+        } 
+        else {
+            this.hintIndex = 0; 
+        }
+    }
+
+    nextHint() {
+        console.log("next hint :");
+        console.log(this.currentHint);
+        console.log(this.hintIndex);
+        console.log(this.wordHints);
+
+        return this.currentHint[this.hintIndex];
+    }
 }
 
 export { Game };

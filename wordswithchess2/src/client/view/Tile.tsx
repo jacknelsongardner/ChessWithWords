@@ -57,6 +57,7 @@ function Tile({ x, y, size }: TileProps) {
   };
 
 
+
   function CenterDot() {
     return (<div
       style={{
@@ -75,10 +76,36 @@ function Tile({ x, y, size }: TileProps) {
 
   }
 
+  function HintDot() {
+    return (<div
+      style={{
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "28px",
+        height: "28px",
+        borderRadius: "50%",
+        backgroundColor: "rgba(255, 242, 126, 1)",
+        pointerEvents: "none",
+        zIndex: 0, // push it behind
+      }}
+    />)
+
+  }
+
   return  <div style={textStyle} onClick={() => GameController.tryMove(x, y)}> 
             {GameController.canMove(x,y) &&
               <div>
                 <CenterDot/>
+              </div>
+            }
+
+            {x == GameController.hint[0] && 
+             y == GameController.hint[1] &&
+             GameController.hintsEnabled &&
+              <div>
+                <HintDot/>
               </div>
             }
             

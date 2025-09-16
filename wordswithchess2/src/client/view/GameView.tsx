@@ -40,12 +40,12 @@ function GameView() {
       return () => clearInterval(timer);
     }
 
-    function handleResetClick() {
-        GameController.tryScrambleBoard(); 
+    function handleSkipClick() {
+        GameController.trySkip(); 
     }
 
     function handleHintClick() {
-        GameController.tryScrambleBoard(); 
+        GameController.getHint(); 
     }
 
     const style: React.CSSProperties = {
@@ -124,9 +124,8 @@ function GameView() {
       
       <div style={bottomStyle}>
         
-        <div style={{display: "flex", justifyContent: "right"}}>
-          <CircleButton onClick={handleHintClick} content={"↩️"} />
-          <CircleButton onClick={handleHintClick} content={"↪️"} /> 
+        <div>
+          {/* empy */}
         </div>
        
         
@@ -134,9 +133,9 @@ function GameView() {
           {/* empy */}
         </div>
 
-        <div style={{display: "flex", justifyContent: "left"}}>
+        <div style={{ display: "flex", justifyContent: "left", gap: "8px" }}>
           <CircleButton onClick={handleHintClick} content={"💡"} /> 
-          <CircleButton onClick={handleHintClick} content={"⏩"} /> 
+          <CircleButton onClick={handleSkipClick} content={"⏩"} /> 
         </div>
 
 

@@ -29,8 +29,11 @@ class Board {
 
     }
 
-    shuffle(wordsToShuffle: string[]): string[] {
+    shuffle(wordsToShuffle: string[]): [string[], Record<string, [number, number][]>] {
         // shuffle words
+
+        var wordPaths: Record<string, [number, number][]> = {}; // map from word -> hints
+
         
         console.log("Shuffle words: " + wordsToShuffle.join(", "));
         var wordsShuffled: string[] = []
@@ -87,12 +90,13 @@ class Board {
             }
 
             wordsShuffled.push(word);
+            wordPaths[word] = path!;
 
         }
 
         console.table(this.content);
 
-        return wordsShuffled;
+        return [wordsShuffled, wordPaths];
     }
 
 
