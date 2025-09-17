@@ -70,7 +70,7 @@ function Tile({ x, y, size }: TileProps) {
         borderRadius: "50%",
         backgroundColor: "rgba(0, 0, 0, 0.22)",
         pointerEvents: "none",
-        zIndex: 0, // push it behind
+        zIndex: 1, // push it behind
       }}
     />)
 
@@ -109,7 +109,7 @@ function Tile({ x, y, size }: TileProps) {
               </div>
             }
             
-            <span style={{ pointerEvents: "none", zIndex: 1 }}>
+            <span style={{ pointerEvents: "none", zIndex: 2 }}>
               {GameController.getBoardContent(x, y)}
             </span>
 

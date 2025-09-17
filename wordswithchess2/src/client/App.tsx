@@ -7,15 +7,32 @@ import { Popup } from "./Popup";
 import { Slideshow } from "./Slideshow";
 import { CountdownCircle } from "./Countdown";
 
+import { context } from '@devvit/web/client';
+
 console.log("opening client");
   
 export const App = () => {
 
-  
+
   const [popupOpen, setPopupOpen] = useState(true); // starts open
    
   useEffect(() => {
-      GameController.subscribe(GameController.onEnd, onEndGame)
+
+    const words = context.postData?.["words"];
+    const difficulty = String(context.postData?.["difficulty"] ?? "");
+
+
+    console.log("post data from reddit: ",context.postData, words, difficulty);
+
+    if (Array.isArray(words) && words.every(w => typeof w === "string")) {
+      GameController.setupGame(words, "medium");
+      console.log("gamecontroller")
+    } else {
+      console.error("Invalid postData.words", words);
+    }
+    
+    GameController.subscribe(GameController.onEnd, onEndGame);
+
   }, []);
   
   function onEndGame() {

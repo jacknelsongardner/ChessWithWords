@@ -4,7 +4,7 @@ import {Game} from "../model/Model";
 class GameController {
     
     static words: string[] = ["at", "be", "to", "tea", "bat", "tab", "abet", "beta", "beat", "bead", "bad", "cab", "cat", "act", "ace", "face", "fade", "decaf", "cafe", "fade", "deaf", "beef", "feed", "faced", "bade", "bead", "beefed"];
-    static game: Game = new Game(GameController.words, 4, 4);
+    static game: Game = new Game(GameController.words, 6, 6);
         
     static loading: boolean;
 
@@ -28,6 +28,28 @@ class GameController {
             return true;
         }
         return false;
+    }
+
+    static setupGame(words: string[], difficulty: string) {
+        GameController.words = words;
+
+        if (difficulty == "easy") {
+            GameController.game = new Game(GameController.words, 4, 4);
+            GameController.game.timeLeft = 120
+        }
+        else if (difficulty == "medium") {
+            GameController.game = new Game(GameController.words, 5, 5);
+            GameController.game.timeLeft = 150
+
+        }
+        else if (difficulty == "hard") {
+            GameController.game = new Game(GameController.words, 6, 6);
+            GameController.game.timeLeft = 180
+
+        }
+
+        console.log("game setup : ", words, difficulty);
+                
     }
 
     static startGame() {

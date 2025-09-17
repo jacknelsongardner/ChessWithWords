@@ -9,17 +9,18 @@ export const createPost = async () => {
   
   return await reddit.submitCustomPost({
     subredditName,
-    title: 'Puzzle #1: A walk in the park',
+    title: 'Puzzle #1: A Walk in the Park',
     splash: {
       appDisplayName: 'Words with Chess',
-      heading: "Today's Theme: \n SPACE",
-      description: 'Words to spell: \n abet \n cat \n dog \n blob',
+      heading: "Puzzle #1 : A Walk in the Park",
+      //description: 'Words to spell: \n abet \n cat \n dog \n blob',
       backgroundUri: 'splash.jpg',
       appIconUri: 'icon.png',
       buttonLabel: 'Start',
     },
     postData: {
-      // optional: any data your app needs
+      difficulty: "hard",
+      words: ["at", "bat", "blob", "hat"]
     }
   });
 };

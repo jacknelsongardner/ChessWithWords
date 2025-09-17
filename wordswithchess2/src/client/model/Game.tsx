@@ -56,7 +56,7 @@ class Game {
         this.setWordToMake();
         this.timeLeft = words.length * 10;
 
-        
+        console.log("new game created with: ", this.board.content);
 
         return this;
         
@@ -144,7 +144,11 @@ class Game {
         if (!this.wordToMake.startsWith(this.currentWord))
         {
             this.currentWord = "";
-        }
+
+            if (this.board!.content![this.peice.x!]![this.peice.y!]! == this.wordToMake[0]) {
+                this.currentWord = this.board!.content![this.peice.x!]![this.peice.y!]!
+            }
+        } 
 
         if (this.currentWord == this.wordToMake) {
             this.wordsGot.push(this.currentWord);
