@@ -19,6 +19,9 @@ function GameView() {
       GameController.subscribe(GameController.onEnd, endGame)
     }, [])
 
+    const [hintsLeft, setHintsLeft] = useState(3);
+    const [skipsLeft, setSkipsLeft] = useState(3);
+
     const [popup, setPopup] = useState(false);
 
     function endGame() {
@@ -41,12 +44,19 @@ function GameView() {
     }
 
     function handleSkipClick() {
-        GameController.trySkip(); 
+      if (skipsLeft > 0) {
+        GameController.trySkip();
+        setSkipsLeft((val) => val-1); 
+      }
     }
 
     function handleHintClick() {
+      if (hintsLeft > 0) {
         GameController.getHint(); 
+        setHintsLeft((val) => val-1); 
+      }
     }
+
 
     const style: React.CSSProperties = {
       position: "relative",
@@ -129,13 +139,12 @@ function GameView() {
         </div>
        
         
-        <div>
-          {/* empy */}
+        <div style={{ display: "flex", justifyContent: "left", gap: "8px" }}>
+          <CircleButton onClick={handleHintClick} content={`💡 x ${hintsLeft}`} /> 
         </div>
 
         <div style={{ display: "flex", justifyContent: "left", gap: "8px" }}>
-          <CircleButton onClick={handleHintClick} content={"💡"} /> 
-          <CircleButton onClick={handleSkipClick} content={"⏩"} /> 
+          <CircleButton onClick={handleSkipClick} content={`⏩ x ${skipsLeft}`} /> 
         </div>
 
 

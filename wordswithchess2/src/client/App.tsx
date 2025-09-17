@@ -15,8 +15,11 @@ export const App = () => {
 
 
   const [popupOpen, setPopupOpen] = useState(true); // starts open
-   
+  const backgroundImage = `/splash-${context.postData!["color"]!}.jpg`
+
   useEffect(() => {
+
+    console.log(backgroundImage);
 
     const words = context.postData?.["words"];
     const difficulty = String(context.postData?.["difficulty"] ?? "");
@@ -38,9 +41,9 @@ export const App = () => {
   function onEndGame() {
       setDone(true);
   }
-
+  
   const backgroundStyle = {
-    backgroundImage: 'url("/background3.jpg")',
+    backgroundImage: `url(${backgroundImage})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
   };
