@@ -12,10 +12,11 @@ class Board {
         let uniqueLetters = fillArray( totalSize,
                             shuffleArray(
                             Array.from(getUniqueLetters(words))));
-
+        /*
         if (uniqueLetters!.length > sizeX * sizeY) {
             throw new Error("Too many unique letters for board size");
         }
+            */
 
         for (let i = 0; i < sizeY; i++) {
             let array: string[] = [];
@@ -38,6 +39,10 @@ class Board {
         console.log("Shuffle words: " + wordsToShuffle.join(", "));
         var wordsShuffled: string[] = []
 
+        var firstWord: boolean = true;
+        var firstWords: [number, number][] = [[1,2],[2,1]];
+
+        const random = Math.floor(Math.random() * 2);
 
         for (var word of wordsToShuffle) {
             console.log(word);
@@ -67,7 +72,13 @@ class Board {
                 if (word.length === 0) continue; // skip found words
                 var spotToTry = usedSpots.pop();
 
-                paths = this.knightPaths([spotToTry![0], spotToTry![1]], word.length);
+                if (firstWord)
+                {
+                    paths = this.knightPaths(firstWords[random]!, word.length);
+                    firstWord = false;
+                } else {
+                    paths = this.knightPaths([spotToTry![0], spotToTry![1]], word.length);
+                }
                 
                 if (paths.length === 0) {
 

@@ -83,8 +83,8 @@ export const createPost = async () => {
     throw new Error('subredditName is required');
   }
 
-  var key = "nxtpuzzle"
-  var next = 1;
+  var key = "nxtpzzle"
+  var next = 0;
 
   if (!(await redis.exists(key))) {
     console.log('Key exists: ' + (await redis.exists('color')));
@@ -97,11 +97,11 @@ export const createPost = async () => {
 
   return await reddit.submitCustomPost({
     subredditName,
-    title: `Puzzle #${next}: ${levels[next]!["theme"]}`,
+    title: `Puzzle #${next+1}: ${levels[next]!["theme"]}`,
     splash: {
       appDisplayName: 'Words with Chess',
-      heading: `Puzzle #${next}: ${levels[next]!["theme"]}`,
-      //description: 'Words to spell: \n abet \n cat \n dog \n blob',
+      heading: `Puzzle #${next+1}: ${levels[next]!["theme"]}`,
+      description: `Difficulty: ${levels[next]!["difficulty"]}`,
       backgroundUri: `splash-${levels[next]!["color"]}.jpg`,
       appIconUri: 'icon.png',
       buttonLabel: 'Start',
@@ -109,7 +109,48 @@ export const createPost = async () => {
     postData: {
       difficulty: levels[next]!["difficulty"],
       words: levels[next]!["words"],
-      color: levels[next]!["color"]
+      color: levels[next]!["color"],
+      theme: levels[next]!["theme"],
+      level: next+1
     }
   });
 };
+
+
+export async function addScore(postId: string, userId: string, score: number ): Promise<{ member: string; score: number; }[]>
+{
+  const { subredditName } = context;
+  if (!subredditName) {
+    throw new Error('subredditName is required');
+  }
+
+  console.log(" adding score")
+
+  var submitted = await redis.zAdd(postId, { score: score, member: userId });
+  
+  
+  console.log(submitted);
+
+  const raw = await redis.zRange(postId, 0, 4);  
+  console.log(raw);
+  
+  return raw;
+};
+
+export async function getUserScore(
+  postId: string,
+  userId: string
+): Promise<number | null> {
+  const { subredditName } = context;
+  if (!subredditName) {
+    throw new Error("subredditName is required");
+  }
+
+  const score = await redis.zScore(postId, userId);
+  if (score) 
+  {
+    return score!; // will be null if userId not in the zset
+  }
+  else {return 0}
+}
+

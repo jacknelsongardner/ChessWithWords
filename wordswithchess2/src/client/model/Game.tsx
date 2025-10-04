@@ -51,12 +51,10 @@ class Game {
         this.board = new Board(sizeX, sizeY, words.join(''));
         this.peice = new Knight(0,0, this.onPlayerPeiceMove.bind(this));
         this.resetBoard();
-        console.log(this.wordsToGet.slice(0, 20));
 
         this.setWordToMake();
         this.timeLeft = words.length * 10;
 
-        console.log("new game created with: ", this.board.content);
 
         return this;
         
@@ -65,17 +63,15 @@ class Game {
     calculateFinalStats(): void {
         this.wordScore = this.wordsGot.length * 100;
        
-        if (this.wordsGot.length == this.wordsOnBoard.length)
+        if (this.wordsOnBoard.length == 0)
         {
             this.completeScore = 100;
         }
 
         this.timeScore = this.timeLeft;
         
-        this.finalScore = this.wordScore + this.timeScore
+        this.finalScore = this.wordScore + this.timeScore + this.completeScore;
 
-        console.log(this.wordScore)
-        console.log(this.wordsGot)
     }
 
     setWordToMake(skipped?: boolean): void {
@@ -86,7 +82,11 @@ class Game {
                 this.wordsOnBoard.push(this.wordToMake)
             }
 
-            this.wordToMake = this.wordsOnBoard.shift()!;;
+            if (this.wordsOnBoard.length > 0)
+            {
+                this.wordToMake = this.wordsOnBoard.shift()!;
+            }
+
             this.resetHint();
         }
     }
@@ -126,12 +126,6 @@ class Game {
     calculateScore(): number {
         var score = 0;
 
-        for( const word of this.wordsGot) {
-            for (const letter of word) {
-                score += 10;
-            }
-        }
-
         score += 5 * this.timeLeft;
 
         return score;
@@ -152,20 +146,17 @@ class Game {
 
         if (this.currentWord == this.wordToMake) {
             this.wordsGot.push(this.currentWord);
+            console.log("wordsGot: ", this.wordsGot);
             this.currentWord = "";
 
-            this.setWordToMake();
+            
+                this.setWordToMake();
+            
         } else {
             this.incrementHint();
         }
 
 
-        console.log("Possible words: " + this.possibleWords.join(", "));
-        console.log("Words on board: " + this.wordsOnBoard.join(", "));
-        console.log("Words to get: " + this.wordsToGet.join(", "));  
-
-
-        console.log("Current word: " + this.currentWord);
 
     }
 
@@ -205,10 +196,7 @@ class Game {
     }
 
     incrementHint() {
-        console.log("hintincrement")
-        console.log(this.currentHint);
-        console.log(this.hintIndex);
-        console.log(this.wordHints);
+        
 
         if ( this.peice.x == this.nextHint()![0]! &&
              this.peice.y == this.nextHint()![1]! ) 
@@ -221,10 +209,7 @@ class Game {
     }
 
     nextHint() {
-        console.log("next hint :");
-        console.log(this.currentHint);
-        console.log(this.hintIndex);
-        console.log(this.wordHints);
+        
 
         return this.currentHint[this.hintIndex];
     }

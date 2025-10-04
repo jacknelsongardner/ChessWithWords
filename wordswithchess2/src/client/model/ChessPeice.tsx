@@ -18,7 +18,6 @@ abstract class ChessPeice {
         if (this.canMove(x, y)) {
             this.x = x;
             this.y = y;
-            console.log("moved");
             this.onPeiceMove(); 
 
             return [this.x, this.y];

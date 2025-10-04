@@ -7,9 +7,10 @@ interface CircleButtonProps {
 function CircleButton({onClick, content}: CircleButtonProps) {
 
   const buttonStyle: React.CSSProperties = {
-    width: "80px",          // longer than height
+    width: "70px",          // longer than height
     height: "35px",         // shorter height
     fontSize: "1.2em",
+    marginLeft: "5px",
     fontWeight: "bold",
     color: "black",
     backgroundColor: "#ffffff",
@@ -26,7 +27,9 @@ function CircleButton({onClick, content}: CircleButtonProps) {
 
   return (
     <button style={buttonStyle} onClick={onClick}>
-          {content}
+          <div style={{color: "grey"}}>
+            {content}
+          </div>
     </button>
   );
 }

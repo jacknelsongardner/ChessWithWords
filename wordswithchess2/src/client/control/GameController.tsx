@@ -1,3 +1,4 @@
+import e from "express";
 import {Game} from "../model/Model";
 
 
@@ -8,6 +9,8 @@ class GameController {
         
     static loading: boolean;
 
+    static playing: boolean = true;
+
     static paused: boolean;
     static timesStarted: number;
 
@@ -17,8 +20,15 @@ class GameController {
     static onTimerTick: string = "onTimerTick";
     static onHint: string = "onHint";
     static onEnd: string = "onEnd";
+    static onWrong: string = "onWrong";
+    static onRight: string = "onRight";
+    static onCheer: string = "onCheer";
 
     static functions: {[key: string] : (() => any)[]} = {}; 
+
+    static difficulty: string = "";
+    static theme: string = "";
+
 
     static hint: [number, number] = [-1, -1];
     static hintsEnabled: boolean = false;
@@ -40,20 +50,16 @@ class GameController {
         else if (difficulty == "medium") {
             GameController.game = new Game(GameController.words, 5, 5);
             GameController.game.timeLeft = 150
-
         }
         else if (difficulty == "hard") {
             GameController.game = new Game(GameController.words, 6, 6);
             GameController.game.timeLeft = 180
-
         }
 
-        console.log("game setup : ", words, difficulty);
                 
     }
 
     static startGame() {
-        console.log("starting game");
         GameController.notifySubscribed(GameController.onStart);
     }
 
@@ -64,12 +70,26 @@ class GameController {
             }
 
             if (GameController.game.testEnd()) {
+                console.log(" end tested and found")
                 GameController.game.calculateFinalStats();
-                GameController.notifySubscribed(GameController.onEnd);
+
+                if (GameController.playing) {
+                    GameController.playing = false;
+
+                    GameController.notifySubscribed(GameController.onEnd);
+                    
+                    if (GameController.game.completeScore == 0)
+                    {
+                        GameController.notifySubscribed(GameController.onRight);
+                    } else {
+                        GameController.notifySubscribed(GameController.onCheer);
+                    }
+
+
+                }
             }
         }
         
-        console.log(GameController.getTimeLeft())
     }
 
     static getFinalStats() {
@@ -81,10 +101,8 @@ class GameController {
     }
 
     static notifySubscribed(key: string): void {
-        console.log(GameController.functions);
         const funcs = GameController.functions[key]
-        
-        console.log("executing for", GameController.functions);
+        console.log(key);
 
         if (funcs) {
             for (var func of funcs) {
@@ -145,7 +163,11 @@ class GameController {
         } else {return [0,0]}
     }
 
-    static tryMove(x: number, y: number): [number, number] | false{
+    static tryMove(x: number, y: number): [number, number] | false {
+        
+        var wordsBefore = GameController.game.wordsOnBoard.length;
+        var currentWordBefore: string = GameController.game.currentWord;
+
         const moved = GameController.game.peice.move(x,y);
 
         if (GameController.game.peice.x == GameController.hint[0] &&
@@ -155,6 +177,17 @@ class GameController {
         }
 
         GameController.notifySubscribed("onTileSelect");
+
+        if (wordsBefore != GameController.game.wordsOnBoard.length)
+        {
+            GameController.notifySubscribed(GameController.onRight);
+        }
+        else if (currentWordBefore.length > GameController.game.currentWord.length 
+                    && GameController.game.wordsOnBoard.length != 0 )
+        {
+            GameController.notifySubscribed(GameController.onWrong);
+        }
+
         return moved;
     } 
 
@@ -216,7 +249,6 @@ class GameController {
         GameController.game.skipWord();
         GameController.hintsEnabled = false;
         GameController.notifySubscribed(GameController.onTileSelected);
-        console.log("word to make now : ", GameController.game.wordToMake);
     }
 
     

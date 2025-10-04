@@ -1,8 +1,8 @@
 import express from 'express';
 import { InitResponse, IncrementResponse, DecrementResponse } from '../shared/types/api';
 import { redis, reddit, createServer, context, getServerPort } from '@devvit/web/server';
-import { createPost } from './core/post';
 
+import { createPost, addScore, getUserScore } from './core/post';
 
 const app = express();
 
@@ -52,6 +52,7 @@ router.get<{ postId: string }, InitResponse | { status: string; message: string 
   }
 );
 
+
 router.post<{ postId: string }, IncrementResponse | { status: string; message: string }, unknown>(
   '/api/increment',
   async (_req, res): Promise<void> => {
@@ -69,6 +70,61 @@ router.post<{ postId: string }, IncrementResponse | { status: string; message: s
       postId,
       type: 'increment',
     });
+  }
+);
+
+
+router.post<unknown, { top: {member: string; score: number}[], highscore: number | null }, { postId: string; score: number, username: string }>
+(  '/api/score',
+  async (_req, res): Promise<void> => {
+
+    const { postId, score, username } = _req.body;
+
+    var name = await reddit.getCurrentUsername();
+
+    var top10 = await addScore(postId, name!, score);
+    var highscore = await redis.zScore(postId, name!);
+
+    console.log(highscore);
+
+    if (postId) {
+      
+      res.json({
+        top: top10,
+        highscore: highscore!
+      });
+
+      return;
+    }
+    else {
+      res.json({
+      top: [],
+      highscore: 0
+    });
+    }
+
+    
+  }
+);
+
+router.post<
+    unknown,
+    { score: number | null },
+    unknown
+  >(
+  "/api/score",
+  async (_req, res): Promise<void> => {
+    const { postId } = context; // comes from Reddit context
+    const name = await reddit.getCurrentUsername();
+
+    if (!postId || !name) {
+      res.json({ score: null });
+      return;
+    }
+
+    const userScore = await getUserScore(postId, name);
+
+    res.json({ score: userScore });
   }
 );
 
@@ -119,6 +175,7 @@ router.post('/internal/menu/post-create', async (_req, res): Promise<void> => {
     });
   } catch (error) {
     console.error(`Error creating post: ${error}`);
+    console.log("error : ")
     res.status(400).json({
       status: 'error',
       message: 'Failed to create post',
